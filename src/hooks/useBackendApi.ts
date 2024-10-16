@@ -88,5 +88,15 @@ export const useBackendApi = () =>({
     }
   },
 
+  updateUser: async(name: string, bio: string)=>{
+    const response = await axios.put(`${URL}/UpdateUser`, {name, bio},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      user: response.data
+    }
+  },
 
 })

@@ -36,7 +36,7 @@ interface academicProps{
 
 interface UserProps {
     _id: string,
-    name: String,
+    name: string,
     email: String,
     password: String,
     state: string,
@@ -46,6 +46,7 @@ interface UserProps {
     skills: [],
     experience: [],
     academic: [],
+    bio: string
 }
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 15));
@@ -56,6 +57,8 @@ export function Profile () {
     const backendApi = useBackendApi()
     const [nameSkill, setNameSkill] = useState("")
     const {id} = useParams()
+    const [openDialogUser, setOpenDialogUser] = useState(false)
+    const [openDialogSkill, setOpenDialogSkill] = useState(false)
     const [openDialogExperience, setOpenDialogExperience] = useState(false)
     const [openDialogAcademic, setOpenDialogAcademic] = useState(false)
 
@@ -88,14 +91,15 @@ export function Profile () {
     }, [auth.user, addSkill, addExperience, addAcademic])
 
 
-    async function addSkill(){
+    async function addSkill(e: FormEvent){
+        e.preventDefault();
         if(!nameSkill){
             return
         }
         console.log(nameSkill)
         const data = await backendApi.addSkill(nameSkill)
         if(data){
-            
+            wait().then(() => setOpenDialogSkill(false));
             setNameSkill("")
         }
     }
@@ -117,6 +121,16 @@ export function Profile () {
         await backendApi.addAcademic(data.curso as string, data.instituicao as string, data.inicio as string, data.termino as string, data.formacao as string)
         wait().then(() => setOpenDialogAcademic(false));
     }
+
+    async function updateUser(e: FormEvent){
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        const data = Object.fromEntries(formData);
+
+        await backendApi.updateUser(data.name as string, data.bio as string)
+        wait().then(() => setOpenDialogUser(false));
+    }
+    
     
     return(
         <Page className="">
@@ -126,11 +140,32 @@ export function Profile () {
                     <div className="px-10 flex gap-5">
                         <img className="h-52 w-52 rounded-full object-cover relative -top-24 border-2 border-grey" src={img} />
                         <div className="text-darkBlueText flex flex-col gap-1 mt-1">
-                            <h1 className="text-4xl flex justify-between">{user?.name}<span><BsPencil/></span></h1>
+                            <div className="text-4xl flex justify-between">
+                                <h1>{user?.name}</h1>
+                                
+                                <Dialog onOpenChange={setOpenDialogUser} open={openDialogUser}>
+                                    <DialogTrigger>
+                                        <span><BsPencil/></span>
+                                    </DialogTrigger>
+                                    <DialogContent className="bg-whiteLight">
+                                        <DialogHeader>
+                                        <DialogTitle className="text-darkBlueText">Editar perfil</DialogTitle>
+                                        </DialogHeader>
+                                        <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={updateUser}>
+                                            <Input name="name" title="Nome" defaultValue={user?.name}/>
+                                            <div>
+                                                <p className="text-darkBlueText max-w-20 relative top-2 left-3 px-2 bg-whiteLight text-sm">Biografia</p>
+                                                <textarea name="bio" defaultValue={user?.bio} className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
+                                            </div>
+                                            <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                        </form>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                             <p className="text-blueText"><i>freelancer</i></p>
 
                             <p>Idade: <span className="text-blueText">{age}</span></p>
-                            <p className="max-w-[800px] ">Biografia: <span className="text-blueText ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem, deleniti amet quod asperiores totam fugit ex omnis illum fuga blanditiis laudantium accusamus a cum et quaerat in obcaecati nam! Nostrum.</span></p>
+                            <p className="max-w-[800px] ">Biografia: <span className="text-blueText ">{user?.bio}</span></p>
                             <div className="mt-12 flex gap-10">
                                 <button className="border-2 border-blueText py-5 px-10 rounded-xl">Vagas salvas</button>
                                 <button className="border-2 border-blueText py-5 px-10 rounded-xl">Carta de apresentação</button>
@@ -144,10 +179,25 @@ export function Profile () {
                             <div className="flex justify-between">
                                 <p>Habilidades</p> 
                                 <div className="flex items-center gap-4">
-                                    <input type="text" value={nameSkill} onChange={(e)=>setNameSkill(e.target.value)} className="border-[1px] border-blueText bg-whiteLight rounded-md h-6 max-w-40 focus:outline-none px-2 focus:border-lightBlueText transition-all duration-200"/>
                                     {id == auth.user?._id?
                                         <div className="flex gap-4">
-                                            <p onClick={addSkill}><TfiPlus/></p><p><BsPencil/></p>
+                                            <Dialog onOpenChange={setOpenDialogSkill} open={openDialogSkill}>
+                                                <DialogTrigger>
+                                                    <p><TfiPlus/></p>
+                                                </DialogTrigger>
+                                                <DialogContent className="bg-whiteLight">
+                                                    <DialogHeader>
+                                                    <DialogTitle className="text-darkBlueText">Habilidade</DialogTitle>
+                                                    </DialogHeader>
+                                                    <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={addSkill}>
+                                                        <Input value={nameSkill} onChange={(e)=>setNameSkill(e.target.value)} title="Habilidade"/>
+                                                        
+                                                        <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                    </form>
+                                                </DialogContent>
+                                            </Dialog>
+                                            
+                                            <p><BsPencil/></p>
                                         </div>
                                     : null
                                 
