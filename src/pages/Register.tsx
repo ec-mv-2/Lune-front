@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import logo from '../assets/Logo.png'
 import { AuthContext } from "@/contexts/AuthContext";
 
+import { format } from 'date-fns';
 export function Register(){
     const cepApi = useCepApi()
     const navigate = useNavigate()
@@ -38,7 +39,6 @@ export function Register(){
                     },
                     function(error) {console.log(error)}
                 );
-                
             }
         }
     }
@@ -165,13 +165,22 @@ export function Register(){
 
     const [code, setCode] = useState(Number)
     function codeVerify(){
+        const inputCode = document.getElementById("inputCode")
         if(code == emailCode){
             slideRegister()
+        }else{
+            if(inputCode){
+                inputCode.style.borderColor = "#991b1b"
+            }
         }
     }
+    const {isContractor} = useParams()
+    let contractorBool = (isContractor === "true")
+
 
     async function createUser() {
-        const data = await backendApi.createUser(name, email, password, cpf, cep, birthDate, state)
+        const dateFormated = format(birthDate, 'MM/dd/yyyy')
+        const data = await backendApi.createUser(name, email, password, cpf, cep, dateFormated, state, contractorBool)
         if(data){
             console.log(data.user)
             auth.signin(email, password)
@@ -182,7 +191,6 @@ export function Register(){
         navigate("/");
     }
 
-    const {isContractor} = useParams()
 
     return(
         <div className="bg-whiteLight min-h-screen text-darkBlueText flex flex-col items-center w-screen ">
@@ -192,13 +200,23 @@ export function Register(){
             </div>
             <div className="flex flex-wrap gap-10 lg:gap-0  max-w-[1350px] w-full h-4/6 my-auto">
                 <div className="flex justify-center items-center flex-auto w-32 ">
-                    <div className="bg-[#dfdfdf] h-28 lg:h-96 p-10 flex items-center rounded-xl min-w-96">
+                    <div className="bg-[#dfdfdf] h-28 lg:h-96 p-10 flex items-center rounded-xl min-w-96">~
+                        {isContractor == "false"?
                         <ul className="text-2xl flex flex-row lg:flex-col gap-5">
                             <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==1?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsPerson className="text-2xl"/></p> {phase >1?<p className="text-[#bfbfbf] text-center"><s>Dados pessoais</s></p>: <p className="text-center">Dados pessoais</p> }</li>
                             <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==2?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsEnvelope className="text-2xl"/></p> {phase >2?<p className="text-[#bfbfbf] text-center"><s>Verifique seu email</s></p>: <p className="text-center">Verifique seu email</p> }</li>
                             <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==3?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><LiaCertificateSolid className="text-2xl"/></p> <p className="text-center">Verifique sua identidade</p></li>
                             <li className="flex gap-3 flex-col items-center lg:flex-row text-sm lg:text-2xl"><p className={phase==4?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsCheckCircle className="text-2xl"/></p> <p>Concluído</p></li>
                         </ul>
+                        :
+                        <ul className="text-2xl flex flex-row lg:flex-col gap-5">
+                            <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==1?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsPerson className="text-2xl"/></p> {phase >1?<p className="text-[#bfbfbf] text-center"><s>Dados empresariais</s></p>: <p className="text-center">Dados empresariais</p> }</li>
+                            <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==2?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsEnvelope className="text-2xl"/></p> {phase >2?<p className="text-[#bfbfbf] text-center"><s>Verifique seu email</s></p>: <p className="text-center">Verifique seu email</p> }</li>
+                            <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==3?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><LiaCertificateSolid className="text-2xl"/></p> <p className="text-center">Verifique sua identidade</p></li>
+                            <li className="flex gap-3 flex-col items-center lg:flex-row text-sm lg:text-2xl"><p className={phase==4?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsCheckCircle className="text-2xl"/></p> <p>Concluído</p></li>
+                        </ul>
+                        }
+                        
                     </div>
                 </div>
                 
@@ -221,7 +239,7 @@ export function Register(){
                         <Input title="SENHA" type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>
                         <Input title="CONFIRME A SENHA" type="password" />
                         <Input title="CEP" onChange={(e)=>getAddress(e.target.value)}/>
-                        <Input title="ESTADO" value={state} onChange={(e)=>setState(e.target.value)}/>
+                        <Input readOnly title="ESTADO" value={state} onChange={(e)=>setState(e.target.value)}/>
 
                         <div className="w-2/5 flex justify-end ">
                         </div>
@@ -242,7 +260,8 @@ export function Register(){
                             </div>
                             <div className="flex flex-col justify-center gap-10">
                                 <input className="border-[1px] border-blueText bg-whiteLight rounded-md h-9 w-full focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"
-                                type="text" 
+                                type="text"
+                                id="inputCode"
                                 onChange={(e)=>setCode(Number(e.target.value))}
                                 />
                                 <button className="h-9 w-full bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200" onClick={codeVerify}>Avançar</button>
@@ -261,12 +280,12 @@ export function Register(){
                         <div className="w-2/5 flex flex-col justify-center gap-10">
                             
                             <Input title="CPF" value={cpf} onChange={(e)=>setCpf(e.target.value)} />
-                            <Input title="Data de nascimento" value={birthDate} onChange={(e)=>setBirthDate(e.target.value)} />
+                            <Input type="date" title="Data de nascimento" value={birthDate} onChange={(e)=>setBirthDate(e.target.value)} />
                             
                             <div className="flex flex-col justify-center gap-10">
                                 <button className="h-9 w-full bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200" onClick={createUser}>Concluir</button>
                                 <p className="text-mainBeige cursor-pointer hover:underline text-center" onClick={slideBackRegister}>Voltar</p>
-                            </div>      
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -16,7 +16,8 @@ export function Login(){
         if(email && password){
             const isLogged = await auth.signin(email, password)
             if(isLogged) {
-                navigate('/')
+                
+                navigate(`/HomePage`)
             }
         }
     }

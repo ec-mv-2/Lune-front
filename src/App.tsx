@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Register } from './pages/Register'
 import { RequireAuth } from './contexts/RequireAuth'
 import { AuthProvider } from './contexts/AuthContext'
-import { Main } from './pages/Main'
 import { HomePage } from './pages/HomePage' 
 import { Chat } from './pages/Chat'
 import { Help } from './pages/Help'
@@ -19,10 +18,10 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path='/' element={<RequireAuth><Main/></RequireAuth>}/>
-            <Route path='/Login' element={<RequireAuth><Main/></RequireAuth>}/>
+            <Route path='/' element={<RequireAuth><HomePage/></RequireAuth>}/>
+            <Route path='/Login' element={<RequireAuth><HomePage/></RequireAuth>}/>
             <Route path='/Register/:isContractor' element={<Register/>}/>
-            <Route path='/HomePage' element={<HomePage/>}/>
+            <Route path='/HomePage' element={<RequireAuth><HomePage/></RequireAuth>}/>
             <Route path='/Chat' element={<Chat/>}/>
             <Route path='/Profile/:id' element={<Profile/>}/>
             <Route path='/Settings' element={<Settings/>}/>

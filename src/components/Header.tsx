@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation} from 'react-router-dom';
 import CircumIcon from '@klarr-agency/circum-icons-react'
@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import logo from "../assets/Logo.png"
 import testeimg from "../assets/testeimg.png"
+import { AuthContext } from '@/contexts/AuthContext';
 
 
 export function Header() {
@@ -17,7 +18,7 @@ export function Header() {
   const [chatIsOpen, setChatIsOpen] = useState(false)
   const [exitIsOpen, setExitIsOpen] = useState(false)
   const [sidebarIsOpen, setSidebarisOpen] = useState(false)
-
+  const auth = useContext(AuthContext)
 
   function goTo(navigateTo: string) {
     window.scrollTo({
@@ -116,7 +117,7 @@ export function Header() {
 
                           <p className="col-span-3 text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus justo vestibulum</p>
                         </div>
-                        <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={()=> goTo (`/Profile`)}>
+                        <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={()=> goTo (`/Profile/${auth.user?._id}`)}>
                           Ver seu perfil
                         </p>
                       </div>
@@ -162,7 +163,7 @@ export function Header() {
 
               <Popover open={exitIsOpen} onOpenChange={setExitIsOpen}>
                 <PopoverTrigger asChild>
-                  <button>
+                  <button >
                     <li className="px-4 text-darkBlueText hover:text-mainBeige focus:text-mainBeige cursor-pointer">
                       <CircumIcon name="logout" size={40} />
                     </li>
@@ -183,7 +184,7 @@ export function Header() {
                     </div>
 
                   </div>
-                  <button className='uppercase bg-darkBlueText mt-5  px-9 py-2 rounded-md text-white'> Sair </button>
+                  <button onClick={auth.signout} className='uppercase bg-darkBlueText mt-5  px-9 py-2 rounded-md text-white'> Sair </button>
                   <p className='text-center pt-3 pb-2 text-mainBeige cursor-pointer'>
                     Continuar
                   </p>

@@ -39,8 +39,9 @@ export const useBackendApi = () =>({
     cpf: string,
     cep: string,
     birthDate: string,
-    state: string) =>{
-    const response = await axios.post(`${URL}/createUser`, {name, email, password, cpf, cep, birthDate, state})
+    state: string,
+    isContractor:boolean) =>{
+    const response = await axios.post(`${URL}/createUser`, {name, email, password, cpf, cep, birthDate, state, isContractor})
 
     return{
       user: response.data
@@ -68,7 +69,7 @@ export const useBackendApi = () =>({
   
   addExperience: async(nameExperience: string, start: string, termination: string, company: string, activities: string)=>{
     const response = await axios.put(`${URL}/AddExperience`, {nameExperience, start, termination, company, activities},{
-      headers: {
+      headers: { 
         Authorization: `Bearer ${storageData}`,
       },
     })

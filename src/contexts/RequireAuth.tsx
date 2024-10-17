@@ -8,7 +8,7 @@ import { Login } from "@/pages/Login";
 export function RequireAuth({children}: {children: JSX.Element}) {
     const auth = useContext(AuthContext);
     const location = useLocation()
-    if(!auth.user && location.pathname == "/"){
+    if(!auth.user && location.pathname != "/Login"){
         return <Home/>
     }else if(!auth.user && location.pathname == "/Login"){
         return <Login/>
