@@ -17,7 +17,6 @@ return (
     <Page className="bg-grey min-h-screen">
 
         <button>
-            asiuhdsauidkkkkkkkkkkkkkkkkkkkkkkkk
         </button>
 
     </Page>

@@ -6,7 +6,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import logo from "../assets/Logo.png"
-import testeimg from "../assets/testeimg.png"
+import testeimg from "../assets/unnamed.png"
 import { AuthContext } from '@/contexts/AuthContext';
 
 
@@ -26,7 +26,6 @@ export function Header() {
     })
     navigate(navigateTo)
   }
-
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -105,9 +104,9 @@ export function Header() {
                       <div className="grid gap-2">
                         <div className="grid-cols-4 text-center gap-4">
 
-                          <p className="col-span-3 text-xl text-darkBlueText">John Doe </p>
+                          <p className="col-span-3 text-xl text-darkBlueText">{auth.user?.name}</p>
                         </div>
-                        <div className='justify-center items-center'>
+                        <div className='flex justify-center items-center w-full'>
                           <img src={testeimg}
                             className='h-48 rounded-full items-center'
                           />
@@ -115,7 +114,7 @@ export function Header() {
 
                         <div className="grid-cols-4 items-center gap-4">
 
-                          <p className="col-span-3 text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus justo vestibulum</p>
+                          <p className="col-span-3 text-center">{auth.user?.bio}</p>
                         </div>
                         <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={()=> goTo (`/Profile/${auth.user?._id}`)}>
                           Ver seu perfil
@@ -185,8 +184,9 @@ export function Header() {
 
                   </div>
                   <button onClick={()=>{
-                    auth.signout
+                    auth.signout()
                     navigate("/")
+
                     }} className='uppercase bg-darkBlueText mt-5  px-9 py-2 rounded-md text-white'> Sair </button>
                   <p className='text-center pt-3 pb-2 text-mainBeige cursor-pointer'>
                     Continuar

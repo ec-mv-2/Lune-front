@@ -150,7 +150,7 @@ export function Profile () {
                                 
                                 <Dialog onOpenChange={setOpenDialogUser} open={openDialogUser}>
                                     <DialogTrigger>
-                                        <span><BsPencil/></span>
+                                        <span><BsPencil className="h-6"/></span>
                                     </DialogTrigger>
                                     <DialogContent className="bg-whiteLight">
                                         <DialogHeader>
