@@ -184,7 +184,10 @@ export function Header() {
                     </div>
 
                   </div>
-                  <button onClick={auth.signout} className='uppercase bg-darkBlueText mt-5  px-9 py-2 rounded-md text-white'> Sair </button>
+                  <button onClick={()=>{
+                    auth.signout
+                    navigate("/")
+                    }} className='uppercase bg-darkBlueText mt-5  px-9 py-2 rounded-md text-white'> Sair </button>
                   <p className='text-center pt-3 pb-2 text-mainBeige cursor-pointer'>
                     Continuar
                   </p>

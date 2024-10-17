@@ -62,9 +62,7 @@ export function Profile () {
     const navigate = useNavigate()
     const [user, setUser] = useState<UserProps>()
     useEffect(()=>{
-        if(!auth.user){
-            navigate("/")
-        }
+        
         function calcAge(){
             if(!user){
                 return 
@@ -138,8 +136,7 @@ export function Profile () {
         await backendApi.updateUser(data.name as string, data.bio as string)
         wait().then(() => setOpenDialogUser(false));
     }
-    
-    
+
     return(
         <Page className="">
             <div className="min-h-screen bg-grey">
