@@ -31,28 +31,28 @@ export function Header() {
   return (
     <div>
       <div className="bg-whiteLight fixed w-full z-10">
-        <div className="pb-1">
-          <div className="flex items-center justify-between px-6 h-28 " >
+        <div className="pb-1 ">
+          <div className="flex items-center justify-between px-6 h-28" >
             <button
-              className='text-darkBlueText hover:text-mainBeige focus:outline-none mt-4'
+              className='text-darkBlueText hover:text-mainBeige focus:outline-none mt-3'
               onClick={() => setSidebarisOpen (!sidebarIsOpen) }>
               <RxHamburgerMenu />
             </button>
             <img
               src={logo}
               onClick={() => goTo(`/HomePage`)}
-              className="h-20 mt-8 ml-4 cursor-pointer"
+              className="h-16 mb-3 ml-4 cursor-pointer"
               alt="Logo do site Lune, com fonte azul e uma pequena lua dourada acima da letra U"
             />
 
 
             <ul className="flex gap-4 justify-center flex-grow ">
-              <li className={`px-4  hover:text-mainBeige cursor-pointer ${isActive('/Notifications') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
+              <li className={`px-8  hover:text-mainBeige cursor-pointer ${isActive('/Notifications') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
 
                 <Popover open={notificationIsOpen} onOpenChange={setNotificationIsOpen}>
                   <PopoverTrigger asChild>
                     <button>
-                      <CircumIcon name="bell_on" size={40} />
+                      <CircumIcon name="bell_on" size={35} />
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-72">
@@ -88,11 +88,11 @@ export function Header() {
               </li>
 
 
-              <li className={`px-4  hover:text-mainBeige cursor-pointer ${isActive('/Profile') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
+              <li className={`px-8  hover:text-mainBeige cursor-pointer ${isActive('/Profile') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
                 <Popover open={profileIsOpen} onOpenChange={setProfileIsOpen}>
                   <PopoverTrigger asChild>
                     <button>
-                      <CircumIcon name="user" size={40} />
+                      <CircumIcon name="user" size={35} />
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-72">
@@ -104,7 +104,7 @@ export function Header() {
                       <div className="grid gap-2">
                         <div className="grid-cols-4 text-center gap-4">
 
-                          <p className="col-span-3 text-xl text-darkBlueText">{auth.user?.name}</p>
+                          <p className="col-span-3 text-xl text-darkBlueText text-truncate">{auth.user?.name}</p>
                         </div>
                         <div className='flex justify-center items-center w-full'>
                           <img src={testeimg}
@@ -128,8 +128,8 @@ export function Header() {
               <Popover open={chatIsOpen} onOpenChange={setChatIsOpen}>
                 <PopoverTrigger asChild>
                   <button>
-                    <li className={`px-4  hover:text-mainBeige cursor-pointer ${isActive('/Chat') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
-                      <CircumIcon name="chat_2" size={42} />
+                    <li className={`px-8  hover:text-mainBeige cursor-pointer ${isActive('/Chat') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
+                      <CircumIcon name="chat_2" size={36} />
                     </li>
                   </button>
                 </PopoverTrigger>
@@ -163,8 +163,8 @@ export function Header() {
               <Popover open={exitIsOpen} onOpenChange={setExitIsOpen}>
                 <PopoverTrigger asChild>
                   <button >
-                    <li className="px-4 text-darkBlueText hover:text-mainBeige focus:text-mainBeige cursor-pointer">
-                      <CircumIcon name="logout" size={40} />
+                    <li className="px-8 text-darkBlueText hover:text-mainBeige focus:text-mainBeige cursor-pointer">
+                      <CircumIcon name="logout" size={35} />
                     </li>
                   </button>
                 </PopoverTrigger>

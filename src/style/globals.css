@@ -67,4 +67,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  .radix-select-item:focus {
+    outline: none; 
+  }
+  
+  .radix-select-trigger:focus {
+    outline: none; 
+  }
+
+ 
+
+  
+  
 }
