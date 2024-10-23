@@ -100,6 +100,49 @@ export const useBackendApi = () =>({
     }
   },
 
+
+  createPosition: async (
+    title: string,
+    enterprise: string,
+    summary: string,
+    salary: number,
+    skill: string[],
+    jobModel: string,
+    location: string,
+    startDate: string,
+    endDate: string,
+    degree: string,
+    experience: string,
+    isPrivate: boolean
+  ) => {
+    const response = await axios.post(
+      `${URL}/AddPosition`, 
+      {
+        title,
+        enterprise,
+        summary,
+        salary,
+        skill,
+        jobModel,
+        location,
+        startDate,
+        endDate,
+        degree,
+        experience,
+        isPrivate
+      }, 
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+
+    return {
+      position: response.data,
+    };
+  },
+
   listPosition: async()=>{
     const response = await axios.get(`${URL}/listPosition`, {
       headers: {
