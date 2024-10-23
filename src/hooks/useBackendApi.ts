@@ -100,4 +100,15 @@ export const useBackendApi = () =>({
     }
   },
 
+  listPosition: async()=>{
+    const response = await axios.get(`${URL}/listPosition`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      position: response.data
+    }
+  },
+
 })

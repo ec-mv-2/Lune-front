@@ -18,6 +18,17 @@ import img from "../assets/unnamed.png"
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
 
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/Input";
+import { format, add} from "date-fns";
+import { Positions } from "./Positions";
+
 const exemploVaga = {
     title: "Desenvolvedor",
     company: "Oscorp Inc.",
@@ -35,6 +46,15 @@ const exemploUser = {
     location: "Rio de Janeiro - RJ",
     education: ["Graduação em Ciência da Computação"] 
 };
+
+interface jobPosition {
+    title: string;
+    enterprise: string;
+    summary: string;
+    skill: string[];
+    location: string;
+  }
+
 
 export function HomePage() {
     const [currentPage, setCurrentPage] = useState(1); // Mova para dentro do componente
@@ -54,6 +74,9 @@ export function HomePage() {
     const auth = useContext(AuthContext);
     const { persistenceLogin } = useBackendApi();
     const [userType, setUserType] = useState<'freelancer' | 'contractor' | null>(null);
+
+
+    const [openDialogPosition, setOpenDialogPosition] = useState(false)
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -205,13 +228,45 @@ export function HomePage() {
                         )}
                         {userType === 'contractor' && (
                             <>
-                                <Button 
+
+                                <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
+                                    <DialogTrigger>
+                                      
+                                        <Button 
                                     variant="mainClear" 
                                     leftIcon={<FaPlus />} 
                                     onClick={() => console.log('Publicar uma vaga clicado')}
+                                    
                                 >
                                     Publicar uma vaga                           
                                 </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="bg-whiteLight">
+                                        <DialogHeader>
+                                        <DialogTitle className="text-darkBlueText">Título da vaga</DialogTitle>
+                                        </DialogHeader>
+                                        <form className="flex flex-col gap-3 text-darkBlueText text-sm" >
+                                            <Input title="Nome da vaga" />
+                                            <div>
+                                                <p className="text-darkBlueText max-w-32 relative top-2 left-3 px-2 bg-whiteLight text-sm  ">Descrição da vaga</p>
+                                                <textarea name="bio" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
+                                            </div>
+                                            <Input title="Remuneração" />
+                                            <Input title="Tempo de contrato" />
+                                            <div>
+                                            <p className="text-darkBlueText max-w-32 relative top-2 left-3 px-2 bg-whiteLight text-sm">Descrição da vaga</p>
+                                                <select name="" id=""><option value="distancia">À distância</option>
+                                                <option value="presencial">Presencial</option>
+                                                </select>
+                                            </div>
+                                            <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                        </form>
+                                    </DialogContent>
+                                </Dialog>
+
+
+
+
                                   
                                 <Button 
                                     variant="mainClear" 
