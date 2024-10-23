@@ -29,12 +29,12 @@ export function Dropdown({ onChange }: DropdownProps) {
     };
 
     return (
-        <div className="flex items-center text-left ">
+        <div className="flex text-left items-center justify-center">
             <p className="mr-2 text-darkBlueText">Ordenar por:</p>
-            <div className='text-left '>
+            <div className='text-left'>
                 <Select onValueChange={orderChange} value={selectedOrder}>
                     <SelectTrigger className="flex items-center justify-between ">
-                        <span className="text-mainBeige px-5">{selectedOrder}</span>
+                        <span className="text-mainBeige px-3">{selectedOrder}</span>
                         <MdArrowDropDown className='text-mainBeige' />
 
                     </SelectTrigger>

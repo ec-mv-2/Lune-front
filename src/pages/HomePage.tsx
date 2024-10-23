@@ -1,9 +1,12 @@
 import Page from "@/components/Page";
 import { Dropdown } from '../components/ui/dropdown';
 import { JobCard } from '../components/ui/jobCard';
+import { FreelancerCard } from '../components/ui/freelancerCard';
+import Button from "@/components/ui/button";
+import Pagination from "@/components/ui/pagination";
+
 import { ScrollUp } from '../components/ui/scrollUp';
-import { useEffect, useState } from "react";
-import { MdKeyboardArrowRight } from "react-icons/md";
+import { useContext, useEffect, useState } from "react";
 import { RiBrush4Line, RiUserSearchLine } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { SlEnvolopeLetter } from "react-icons/sl";
@@ -11,8 +14,11 @@ import { HiOutlineBookmark } from "react-icons/hi2";
 import { useBackendApi } from '../hooks/useBackendApi'; 
 import { FaPlus } from "react-icons/fa6";
 import { BiCollection } from "react-icons/bi";
+import img from "../assets/unnamed.png"
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '@/contexts/AuthContext';
 
-const exemplo = {
+const exemploVaga = {
     title: "Desenvolvedor",
     company: "Oscorp Inc.",
     summary: "Precisamos de alguém que crie o design de um site, o fluxo do usuário e registre toda a documentação necessária.",
@@ -21,9 +27,31 @@ const exemplo = {
     location: "São Paulo - SP - Brasil"
 };
 
-export function HomePage() {
-    const [order, setOrder] = useState('Mais relevante');
+const exemploUser = {
+    name: "Ana Clara Souza",
+    mainJob: "Desenvolvedora Front-end",
+    skills: ["React", "CSS", "JavaScript"],
+    experience: ["2 anos como Web Designer em CAST"],
+    location: "Rio de Janeiro - RJ",
+    education: ["Graduação em Ciência da Computação"] 
+};
 
+export function HomePage() {
+    const [currentPage, setCurrentPage] = useState(1); // Mova para dentro do componente
+    const itemsPerPage = 6;
+
+    const jobCards = Array(30).fill(exemploVaga);
+    const freelancerCards = Array(30).fill(exemploUser);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    const currentFreelancers = freelancerCards.slice(indexOfFirstItem, indexOfLastItem);
+    const currentJobs = jobCards.slice(indexOfFirstItem, indexOfLastItem);
+
+    const [order, setOrder] = useState('Mais relevante');
+    const navigate = useNavigate();
+    const auth = useContext(AuthContext);
     const { persistenceLogin } = useBackendApi();
     const [userType, setUserType] = useState<'freelancer' | 'contractor' | null>(null);
 
@@ -45,84 +73,169 @@ export function HomePage() {
         }
     }, []);
 
+    function goTo(navigateTo: string) {
+        window.scrollTo({
+          top: 0,
+        });
+        navigate(navigateTo);
+    }
+
     return (
         <div className="min-h-screen">
             <Page className="bg-grey">
                 <div className="flex justify-between items-start mx-48 my-24 space-x-8">
-                    
                     <div className="w-1/4">
-                        {userType === 'contractor' && <p className="text-xl text-darkBlueText">Bem-vindo, contratante!</p>}
-                        {userType === 'freelancer' && <p>Bem-vindo, freelancer!</p>}
+                        {userType === 'contractor' && (
+                            <div className="flex flex-col items-center justify-center">
+                                <p className="text-xl text-darkBlueText">
+                                    Boas vindas, <span className="text-mainBeige"> contratante</span>!
+                                </p>
+                                <img className="h-52 w-52 rounded-full object-cover border-2 border-grey mt-6 mb-8" src={img} />
+                                
+                                <Button 
+                                    variant="simple" 
+                                    leftIcon={null} 
+                                    rightIcon={null}
+                                    onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+                                >
+                                    Ver perfil
+                                </Button>
+                                <Button  
+                                    variant="simple"
+                                    onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+                                    leftIcon={null}
+                                    rightIcon={null}
+                                >
+                                    Métricas
+                                </Button>
+                            </div>
+                        )}
+                        {userType === 'freelancer' && (
+                            <div className="flex flex-col items-center justify-center">
+                                <p className="text-xl text-darkBlueText">
+                                    Boas vindas, <span className="text-mainBeige"> freelancer</span>!
+                                </p>
+                                <img className="h-52 w-52 rounded-full object-cover border-2 border-grey mt-6" src={img} />
+                                
+                                <Button 
+                                    variant="simple" 
+                                    leftIcon={null} 
+                                    rightIcon={null}
+                                    onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+                                >
+                                    Ver perfil
+                                </Button>
+                                <Button  
+                                    variant="simple"
+                                    onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+                                    leftIcon={null}
+                                    rightIcon={null}
+                                >
+                                    Métricas
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     
-                    
-                    <div className="flex-">
+                    <div className="flex-1">
                         {userType === 'freelancer' && (
                             <>
-                                <p className="text-darkBlueText text-3xl mb-4 text-center">Vagas que talvez te interessem</p>
+                                <p className="text-darkBlueText text-3xl pb-4 text-center">Vagas que talvez te interessem</p>
                                 <Dropdown onChange={setOrder} />
-                                <JobCard job={exemplo} />
-                                <JobCard job={exemplo} />
-                                <JobCard job={exemplo} />
-                                <JobCard job={exemplo} />
+                                {currentJobs.map((job, index) => (
+                                    <JobCard key={index} job={job} />
+                                ))}
+                                <Pagination 
+                                    totalPages={Math.ceil(jobCards.length / itemsPerPage)} 
+                                    currentPage={currentPage} 
+                                    onPageChange={setCurrentPage} 
+                                />
                             </>
                         )}
                         {userType === 'contractor' && (
                             <>
-                                <p className="text-darkBlueText text-3xl mb-4 text-center">Freelancers disponíveis</p>
-                                
+                               <p className="text-darkBlueText text-3xl pb-4 text-center">Freelancers disponíveis</p>
+                               <Dropdown onChange={setOrder} />
+                               {currentFreelancers.map((freelancer, index) => (
+                                   <FreelancerCard key={index} freelancer={freelancer} />
+                               ))}
+                               <Pagination 
+                                   totalPages={Math.ceil(freelancerCards.length / itemsPerPage)} 
+                                   currentPage={currentPage} 
+                                   onPageChange={setCurrentPage} 
+                               />
                             </>
                         )}
                     </div>
 
-                    <div className="w-1/4 flex flex-col items-center space-y-4">
+                    <div className="w-1/6 flex flex-col items-right space-y-5 pt-16">
                         {userType === 'freelancer' && (
                             <>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <HiOutlineBookmark className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Vagas salvas</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <RiBrush4Line className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Personalize seu perfil</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <VscPreview className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Buscar vagas</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <SlEnvolopeLetter className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Carta de apresentação</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<HiOutlineBookmark />} 
+                                    onClick={() => console.log('Vagas salvas clicado')}
+                                >
+                                    Vagas salvas
+                                </Button>
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<RiBrush4Line />} 
+                                    onClick={() => console.log('Atualizar dados pessoais clicado')}
+                                >
+                                    Atualizar dados pessoais  
+                                </Button>
+
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<VscPreview />} 
+                                    onClick={() => goTo(`/Positions`)}
+                                >
+                                    Buscar vagas                            
+                                </Button>
+                                  
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<SlEnvolopeLetter />} 
+                                    onClick={() => console.log('Carta de apresentação clicado')}
+                                >
+                                    Carta de apresentação                             
+                                </Button>
                             </>
                         )}
                         {userType === 'contractor' && (
                             <>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <FaPlus className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Publicar uma vaga</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <HiOutlineBookmark className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Freelancers selecionados</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <RiUserSearchLine  className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Buscar freelancers</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
-                                <button className="border border-lightBlueText text-darkBlueText py-6 w-72 px-10 rounded flex items-center justify-between">
-                                    <BiCollection   className="mr-2 text-2xl text-lightBlueText" />
-                                    <span className="flex-1 text-left ml-4">Suas vagas</span>
-                                    <MdKeyboardArrowRight className="ml-2 text-lightBlueText" />
-                                </button>
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<FaPlus />} 
+                                    onClick={() => console.log('Publicar uma vaga clicado')}
+                                >
+                                    Publicar uma vaga                           
+                                </Button>
+                                  
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<HiOutlineBookmark />} 
+                                    onClick={() => console.log('Freelancers selecionados clicado')}
+                                >
+                                    Freelancers selecionados                          
+                                </Button>
                                 
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<RiUserSearchLine />} 
+                                    onClick={() => goTo(`/Positions`)}
+                                >
+                                    Buscar freelancers                           
+                                </Button>
+
+                                <Button 
+                                    variant="mainClear" 
+                                    leftIcon={<BiCollection />} 
+                                    onClick={() => console.log('Suas vagas clicado')}
+                                >
+                                    Suas vagas                           
+                                </Button>
                             </>
                         )}
                     </div>
