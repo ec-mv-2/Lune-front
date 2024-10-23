@@ -174,7 +174,6 @@ export function HomePage() {
                             <>
                                <p className="text-darkBlueText text-3xl pb-4 text-center">Freelancers disponíveis</p>
                                <Dropdown onChange={setOrder} />
-                               {/* Aqui você pode mapear freelancers se houver uma lista */}
                                <Pagination 
                                    totalPages={Math.ceil(currentJobs.length / itemsPerPage)} 
                                    currentPage={currentPage} 
