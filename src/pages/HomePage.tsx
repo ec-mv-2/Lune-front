@@ -1,15 +1,12 @@
 import Page from "@/components/Page";
 import { Dropdown } from '../components/ui/dropdown';
 import { JobCard } from '../components/ui/jobCard';
-//import { FreelancerCard } from '../components/ui/freelancerCard';
 import Button from "@/components/ui/button";
 import Pagination from "@/components/ui/pagination";
 
 import { useCepApi } from "@/hooks/useCepApi";
-
-
 import { ScrollUp } from '../components/ui/scrollUp';
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RiBrush4Line, RiUserSearchLine } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { SlEnvolopeLetter } from "react-icons/sl";
@@ -21,8 +18,6 @@ import img from "../assets/unnamed.png";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
 
-
-
 import {
     Dialog,
     DialogContent,
@@ -32,29 +27,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/Input";
 
-//const exemploUser = {
-  //  name: "Ana Clara Souza",
-   // mainJob: "Desenvolvedora Front-end",
-    //skills: ["React", "CSS", "JavaScript"],
-    //experience: ["2 anos como Web Designer em CAST"],
-    //location: "Rio de Janeiro - RJ",
-    //education: ["Graduação em Ciência da Computação"],
-//};
-
-
-interface Job {
-    title: string;
-    enterprise: string;
-    summary: string;
-    skill: string[];
-    location: string;
-}
-
-
-
 export function HomePage() {
     const [currentPage, setCurrentPage] = useState(1);
-    const [jobs, setJobs] = useState<Job[]>([]); 
+    const [jobs, setJobs] = useState<Job[]>([]);
     const [order, setOrder] = useState('Mais relevante');
     const itemsPerPage = 6;
     const navigate = useNavigate();
@@ -64,13 +39,20 @@ export function HomePage() {
     const [openDialogPosition, setOpenDialogPosition] = useState(false);
     const [step, setStep] = useState(1);
     const [workModel, setWorkModel] = useState('distancia');
-    const cepApi = useCepApi()
-    const [cep, setCep] = useState("")
-    const [state, setState] = useState("")
+    const cepApi = useCepApi();
+
+    const [cep, setCep] = useState("");
     const [remuneracao, setRemuneracao] = useState("");
 
-
-
+    const [title, setTitle] = useState('');
+    const [summary, setSummary] = useState('');
+    const [skills, setSkills] = useState<string[]>([]);
+    const [education, setEducation] = useState('Ensino médio');
+    const [location, setLocation] = useState('');
+    const [startDate, setStartDate] = useState<string | undefined>(undefined);
+    const [endDate, setEndDate] = useState<string | undefined>(undefined);
+    const [experience, setExperience] = useState('');
+    const [isPrivate, setIsPrivate] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -96,15 +78,19 @@ export function HomePage() {
         fetchJobs();
     }, [api]);
 
-    function getAddress(cep: string){
-        if(cep.length == 8){
-            const data = cepApi.getAddress(cep)
-            if(data){
+    
+    function getAddress(cep: string) {
+        if (cep.length === 8) {
+            const data = cepApi.getAddress(cep);
+            if (data) {
                 data.then(
-                    function(value) {setState(value.address)
-                        setCep(cep)
+                    function (value) {
+                        setLocation(value.address);
+                        setCep(cep);
                     },
-                    function(error) {console.log(error)}
+                    function (error) {
+                        console.log(error);
+                    }
                 );
             }
         }
@@ -124,10 +110,68 @@ export function HomePage() {
         const formattedValue = new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
-        }).format(numericValue / 100); 
+        }).format(numericValue / 100);
         return formattedValue;
     };
 
+    const createJobPosition = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        const newPosition = {
+            title,
+            enterprise: auth.user?.name as string || "Nome da Empresa", 
+            summary,
+            salary: parseFloat(remuneracao.replace(/[^\d.-]+/g, "")), 
+            skill: skills,
+            jobModel: workModel,
+            location,
+            startDate: startDate || "", 
+            endDate: endDate || "", 
+            degree: education,
+            experience,
+            isPrivate,
+        };
+
+        console.log("Nova posição sendo enviada:", newPosition);
+    
+        try {
+            const response = await api.createPosition(
+                newPosition.title,
+                newPosition.enterprise,
+                newPosition.summary,
+                newPosition.salary,
+                newPosition.skill,
+                newPosition.jobModel,
+                newPosition.location,
+                newPosition.startDate,
+                newPosition.endDate,
+                newPosition.degree,
+                newPosition.experience,
+                newPosition.isPrivate
+            );
+            
+            setJobs([...jobs, response.position]);
+            console.log('Vaga criada com sucesso:', response.position);
+            setOpenDialogPosition(false);
+        } catch (error) {
+            console.error('Erro ao cadastrar vaga', error);
+        }
+    };
+
+    const exampleJob = {
+        title: "Desenvolvedor Full Stack",
+        enterprise: "Tech Company",
+        summary: "Vaga para desenvolvedor com experiência em React, Node.js, e TypeScript.",
+        skill: ['React', 'Node.js', 'TypeScript'],
+        location: "São Paulo, SP",
+        salary: 8000,
+        jobModel: "Remoto",
+        startDate: "01/11/2024",
+        endDate: "01/05/2025",
+        degree: "Ensino superior",
+        experience: "3 anos",
+    };
+    
 
     return (
         <div className="min-h-screen">
@@ -139,46 +183,50 @@ export function HomePage() {
                                 Boas vindas, <span className="text-mainBeige"> {userType === 'contractor' ? 'contratante' : 'freelancer'}!</span>
                             </p>
                             <img className="h-52 w-52 rounded-full object-cover border-2 border-grey mt-6 mb-8" src={img} alt="User" />
-                            
-                            <Button 
-                                variant="simple" 
-                                onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+
+                            <Button
+                                variant="simple"
+                                onClick={() => goTo(`/Profile/${auth.user?._id}`)}
                             >
                                 Ver perfil
                             </Button>
-                            <Button  
+                            <Button
                                 variant="simple"
-                                onClick={() => goTo(`/Profile/${auth.user?._id}`)} 
+                                onClick={() => goTo(`/Profile/${auth.user?._id}`)}
                             >
                                 Métricas
                             </Button>
                         </div>
                     </div>
-                    
+
                     <div className="flex-1">
                         {userType === 'freelancer' && (
                             <>
                                 <p className="text-darkBlueText text-3xl pb-4 text-center">Vagas que talvez te interessem</p>
                                 <Dropdown onChange={setOrder} />
                                 {currentJobs.map((job, index) => (
-                                <JobCard key={index} job={job} />  
+                                    <JobCard key={index} job={job} isContractor={false} />
                                 ))}
-                                <Pagination 
-                                    totalPages={Math.ceil(jobs.length / itemsPerPage)} 
-                                    currentPage={currentPage} 
-                                    onPageChange={setCurrentPage} 
+                                <Pagination
+                                    totalPages={Math.ceil(jobs.length / itemsPerPage)}
+                                    currentPage={currentPage}
+                                    onPageChange={setCurrentPage}
                                 />
                             </>
                         )}
                         {userType === 'contractor' && (
                             <>
-                               <p className="text-darkBlueText text-3xl pb-4 text-center">Freelancers disponíveis</p>
-                               <Dropdown onChange={setOrder} />
-                               <Pagination 
-                                   totalPages={Math.ceil(currentJobs.length / itemsPerPage)} 
-                                   currentPage={currentPage} 
-                                   onPageChange={setCurrentPage} 
-                               />
+                                <p className="text-darkBlueText text-3xl pb-4 text-center">Freelancers disponíveis</p>
+                                
+                                <Dropdown onChange={setOrder} />
+                                <JobCard job={exampleJob} isContractor={true} />
+
+                                <Pagination
+                                    totalPages={Math.ceil(currentJobs.length / itemsPerPage)}
+                                    currentPage={currentPage}
+                                    onPageChange={setCurrentPage}
+                                />
+                                
                             </>
                         )}
                     </div>
@@ -186,66 +234,80 @@ export function HomePage() {
                     <div className="w-1/6 flex flex-col items-right space-y-6 pt-16">
                         {userType === 'freelancer' && (
                             <>
-                                <Button 
-                                    variant="mainClear" 
-                                    leftIcon={<HiOutlineBookmark />} 
+                                <Button
+                                    variant="mainClear"
+                                    leftIcon={<HiOutlineBookmark />}
                                     onClick={() => console.log('Vagas salvas clicado')}
                                 >
                                     Vagas salvas
                                 </Button>
-                                <Button 
-                                    variant="mainClear" 
-                                    leftIcon={<RiBrush4Line />} 
+                                <Button
+                                    variant="mainClear"
+                                    leftIcon={<RiBrush4Line />}
                                     onClick={() => console.log('Atualizar dados pessoais clicado')}
                                 >
-                                    Atualizar dados pessoais  
+                                    Atualizar dados pessoais
                                 </Button>
-                                <Button 
-                                    variant="mainClear" 
-                                    leftIcon={<VscPreview />} 
+                                <Button
+                                    variant="mainClear"
+                                    leftIcon={<VscPreview />}
                                     onClick={() => goTo(`/Positions`)}
                                 >
-                                    Buscar vagas                            
+                                    Buscar vagas
                                 </Button>
-                                <Button 
-                                    variant="mainClear" 
-                                    leftIcon={<SlEnvolopeLetter />} 
+                                <Button
+                                    variant="mainClear"
+                                    leftIcon={<SlEnvolopeLetter />}
                                     onClick={() => console.log('Carta de apresentação clicado')}
                                 >
-                                    Carta de apresentação                             
+                                    Carta de apresentação
                                 </Button>
                             </>
                         )}
                         {userType === 'contractor' && (
                             <>
-                               <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
+                                <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
                                     <DialogTrigger>
-                                        <Button 
-                                            variant="mainClear" 
-                                            leftIcon={<FaPlus />} 
-                                            onClick={() => console.log('Publicar uma vaga clicado')}
+                                        <Button
+                                            variant="mainClear"
+                                            leftIcon={<FaPlus />}
+                                            onClick={() => setOpenDialogPosition(true)} 
+                                            
                                         >
-                                            Publicar uma vaga                           
+                                            Publicar uma vaga
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="bg-grey  py-10 px-8">
+                                    <DialogContent className="bg-whiteLight  py-10 px-8">
                                         <DialogHeader>
                                             <DialogTitle className="text-darkBlueText text-2xl">Publicar uma vaga</DialogTitle>
                                             <p className="text-gray-500">Encontre o freelancer ideal para o seu serviço.</p>
                                         </DialogHeader>
 
-
                                         {step === 1 && (
-                                            <form className="flex flex-col gap-3 text-darkBlueText">
+                                            <form className="flex flex-col gap-3 text-darkBlueText" >
                                                 <div className="">
-                                                <Input title="Título da vaga" className="" />
+                                                <Input title="Título da vaga" value={title} onChange={(e) => setTitle(e.target.value)} className="" required />
                                                 
-                                                    <p className="text-darkBlueText max-w-36 relative top-2 left-3 px-2 bg-grey text-md">Descrição da vaga</p>
-                                                    <textarea className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-grey focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
-                                                    <Input title="Habilidades desejadas" className="" type=""/>
+                                                    <p className="text-darkBlueText max-w-36 relative top-2 left-3 px-2 bg-whiteLight text-md">Descrição da vaga</p>
+
+                                                    <textarea className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"
+                                                    value={summary}
+                                                    onChange={(e) => setSummary(e.target.value)}
+                                                    required />
+
+                                                    <Input title="Habilidades desejadas" className="" 
+                                                    value={skills}
+                                                    onChange={(e) => setSkills(e.target.value.split(','))}
+                                                    placeholder="Habilidades desejadas para a vaga (separadas por vírgulas)"
+                                                    required
+                                                    />
+
                                                     <div className="mb-5">
-                                                    <p className="text-darkBlueText max-w-28 relative top-2 left-3 px-2 bg-grey text-md"> Escolaridade </p>
-                                                    <select className="w-full rounded-md border-[1px] border-blueText bg-grey focus:outline-none focus:border-lightBlueText px-3 py-4 m">
+                                                    <p className="text-darkBlueText max-w-28 relative top-2 left-3 px-2 bg-whiteLight text-md"> Escolaridade </p>
+                                                    <select className="w-full rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none focus:border-lightBlueText px-3 py-4 m"
+                                                    value={education}
+                                                    onChange={(e) => setEducation(e.target.value)}
+                                                    >
                                                         <option value="ensinomedio">Ensino médio</option>
                                                         <option value="superiorcursando">Ensino superior (cursando)</option>
                                                         <option value="superiorcompleto">Ensino superior (completo)</option>
@@ -254,7 +316,8 @@ export function HomePage() {
                                                         <option value="nulo">Sem preferência de escolaridade</option>
                                                         
                                                     </select>
-                                                    <Input title="Área de experiência" className="" type=""/>
+
+                                                    <Input title="Experiência desejada" value={experience} type="text"  onChange={(e) => setExperience(e.target.value)}/>
 
                                                 </div>
                                                 </div>
@@ -275,28 +338,31 @@ export function HomePage() {
                                         )}
 
                                         {step === 2 && (
-                                            <form className="flex flex-col gap-3 text-darkBlueText">
+                                            <form className="flex flex-col gap-3 text-darkBlueText" onSubmit={createJobPosition}>
                                                 <div className="m-">
                                                 <p className="text-lightBlueText text-sm hover:text-mainBeige"
                                                 onClick={() => {
                                                 setStep(1); 
                                                     }}>
                                                         Voltar</p>
+
                                                 <Input
                                                     title="Remuneração"
                                                     type="text"
                                                     value={remuneracao}
-                                                    onChange={(e) => {
-                                                        const formattedValue = formatCurrency(e.target.value);
-                                                        setRemuneracao(formattedValue);
-                                                    }}
+                                                    onChange={(e) => setRemuneracao(formatCurrency(e.target.value))}
+                                                
+                                                required
                                                 />
-                                                <Input title="Início de contrato" className="" type="date" />
-                                                <Input title="Fim de contrato" className="" type="date"/>
+
+                                                <Input title="Início de contrato" className="" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+
+                                                <Input title="Fim de contrato" value={endDate}
+                                                 onChange={(e) => setEndDate(e.target.value)} type="date"/>
 
                                                 <div className="mb-5">
-                                                    <p className="text-darkBlueText max-w-40 relative top-2 left-3 px-2 bg-grey text-md">Modelo de trabalho</p>
-                                                    <select className="w-full rounded-md border-[1px] border-blueText bg-grey focus:outline-none focus:border-lightBlueText px-3 py-4 m"
+                                                    <p className="text-darkBlueText max-w-40 relative top-2 left-3 px-2 bg-whiteLight text-md">Modelo de trabalho</p>
+                                                    <select className="w-full rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none focus:border-lightBlueText px-3 py-4 m"
                                                     value={workModel}
                                                     onChange={(e) => setWorkModel(e.target.value)}
                                                     >
@@ -306,13 +372,22 @@ export function HomePage() {
                                                     {workModel === 'presencial' && (
                                                         <div>
                                                         <Input title="CEP" onChange={(e)=>getAddress(e.target.value)}/>
-                                                  <Input readOnly title="Estado" value={state} onChange={(e)=>setState(e.target.value)}/>
+                                                  <Input readOnly title="Estado" value={location} onChange={(e)=>setLocation(e.target.value)}/>
                                                         </div>
                                                     )}
 
                                                   <div className="flex align-middle justify-end mt-5">
-                                                    <input type="checkbox" name="Vaga privada"/><p className="ml-4"> Vaga privada</p>
                                                     
+                                                    <div className="flex items-center space-x-2">
+                                                    <label htmlFor="isPrivate" className="text-gray-700">Vaga privada</label>
+                                                    <input
+                                                        id="isPrivate"
+                                                        type="checkbox"
+                                                        checked={isPrivate}
+                                                        onChange={(e) => setIsPrivate(e.target.checked)}
+                                                    />
+                                                </div>
+
                                                     </div> 
                                                 </div>
 
@@ -320,7 +395,8 @@ export function HomePage() {
 
 
                                                 <div className="flex">
-                                                <Button variant="strongBlue" leftIcon={null} rightIcon={null} onClick={() => console.log('Vaga publicada')} >
+                                                    
+                                                <Button  variant="strongBlue" leftIcon={null} rightIcon={null} type="submit" onClick={() => console.log('Vaga publicada')}  >
                                                     Publicar Vaga
                                                 </Button>
                                                 </div>
