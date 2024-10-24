@@ -102,18 +102,18 @@ export const useBackendApi = () =>({
 
 
   createPosition: async (
-    title: string,
-    enterprise: string,
-    summary: string,
-    salary: number,
-    skill: string[],
-    jobModel: string,
-    location: string,
-    startDate: string,
-    endDate: string,
-    degree: string,
-    experience: string,
-    isPrivate: boolean
+    title: String,
+    enterprise: String,
+    summary: String,
+    salary: Number,
+    skill: String,
+    jobModel: String,
+    location: String,
+    startDate: String,
+    endDate: String,
+    degree: String,
+    experience: Number,
+    isPrivate: Boolean
   ) => {
     const response = await axios.post(
       `${URL}/AddPosition`, 
@@ -141,6 +141,74 @@ export const useBackendApi = () =>({
     return {
       position: response.data,
     };
+  },
+
+
+  editPosition: async (
+
+    title: String,
+    newTitle: String,
+    enterprise: String,
+    summary: String,
+    salary: Number,
+    skill: String,
+    jobModel: String,
+    location: String,
+    startDate: String,
+    endDate: String,
+    degree: String,
+    experience: Number,
+    isPrivate: Boolean
+  ) => {
+    const response = await axios.put(
+      `${URL}/UpdatePosition`, 
+      {
+        
+        title,
+        newTitle,
+        enterprise,
+        summary,
+        salary,
+        skill,
+        jobModel,
+        location,
+        startDate,
+        endDate,
+        degree,
+        experience,
+        isPrivate
+      }, 
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+
+    return {
+      position: response.data,
+    };
+  },
+  deletePosition: async (
+
+    title: String,
+   
+  ) => {
+    const response = await axios.put(
+      `${URL}/DeletePosition`, 
+      {
+        
+        title,
+       
+      }, 
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+
+   
   },
 
   listPosition: async()=>{

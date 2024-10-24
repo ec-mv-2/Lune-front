@@ -8,7 +8,7 @@ interface Job {
   title: string;
   enterprise: string;
   summary: string;
-  skill: string[];
+  skill: string;
   location: string;
 }
 
@@ -41,7 +41,7 @@ export function JobCard({ job, isContractor }: JobCardProps) {
         </div>
         <p className="text-md text-gray-500 italic">Empresa: <span className="font-semibold text-blueText">{enterprise}</span></p>
         <p className="text-sm w-full text-gray-500 font-medium">Resumo: <span className="text-darkBlueText">{summary}</span></p>
-        <p className="text-sm text-gray-500 font-medium">Habilidades necessárias: <span className="text-darkBlueText">{skill.join(', ')}</span></p>
+        <p className="text-sm text-gray-500 font-medium">Habilidades necessárias: <span className="text-darkBlueText">{skill}</span></p>
         <p className="text-xs text-gray-500">Localização: {location}</p>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-3 ">

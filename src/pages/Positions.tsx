@@ -11,7 +11,7 @@ interface jobPosition {
   title: string;
   enterprise: string;
   summary: string;
-  skill: string[];
+  skill: string;
   location: string;
 }
 
