@@ -194,13 +194,8 @@ export const useBackendApi = () =>({
     title: String,
    
   ) => {
-    const response = await axios.put(
-      `${URL}/DeletePosition`, 
-      {
-        
-        title,
-       
-      }, 
+    await axios.delete(
+      `${URL}/DeletePosition/${title}`, 
       {
         headers: {
           Authorization: `Bearer ${storageData}`,

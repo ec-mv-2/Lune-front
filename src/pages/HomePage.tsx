@@ -44,6 +44,8 @@ export function HomePage() {
     const api = useBackendApi();
     const [userType, setUserType] = useState<'freelancer' | 'contractor' | null>(null);
     const [openDialogPosition, setOpenDialogPosition] = useState(false);
+    const [openDialogEdit, setOpenDialogEdit] = useState(false);
+    const [openDialogDelete, setOpenDialogDelete] = useState(false)
     const [step, setStep] = useState(1);
     const [workModel, setWorkModel] = useState('distancia');
     const cepApi = useCepApi();
@@ -219,12 +221,42 @@ export function HomePage() {
             
             // setPositions([...positions, response.position]);
             console.log('Vaga criada com sucesso:', response.position);
-            setOpenDialogPosition(false);
+            setOpenDialogEdit(false);
         } catch (error) {
             console.error('Erro ao cadastrar vaga', error);
         }
 
     };
+
+
+    
+    const deleteJobPosition = async (e: React.FormEvent) => {
+        e.preventDefault();
+    
+        const deletePosition = {
+
+        
+        title
+
+        }
+
+        console.log("Nova posição sendo enviada:", deletePosition);
+    
+        try {
+            const response = await api.deletePosition(
+                title
+                
+            );
+            
+            // setPositions([...positions, response.position]);
+         
+            setOpenDialogDelete(false);
+        } catch (error) {
+            console.error('Erro ao cadastrar vaga', error);
+        }
+
+    };
+
 
 
     const exampleJob = {
@@ -483,12 +515,12 @@ export function HomePage() {
                                 </Dialog>
 
 
-                                <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
+                                <Dialog onOpenChange={setOpenDialogDelete} open={openDialogDelete}>
                                     <DialogTrigger>
                                         <Button
                                             variant="mainClear"
                                             leftIcon={<FaPlus />}
-                                            onClick={() => setOpenDialogPosition(true)} 
+                                            onClick={() => setOpenDialogDelete(true)} 
                                             
                                         >
                                             Deletar vaga
@@ -501,7 +533,7 @@ export function HomePage() {
                                         </DialogHeader>
 
                                         
-                                            <form className="flex flex-col gap-3 text-darkBlueText" >
+                                            <form className="flex flex-col gap-3 text-darkBlueText " onSubmit={deleteJobPosition} >
                                                 <div className="">
                                                 <Input title="Título da vaga" value={title} onChange={(e) => setTitle(e.target.value)} className="" required />
                                       
@@ -529,12 +561,12 @@ export function HomePage() {
                                     Buscar freelancers                           
                                 </Button>
 
-                                <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
+                                <Dialog onOpenChange={setOpenDialogEdit} open={openDialogEdit}>
                                     <DialogTrigger>
                                         <Button
                                             variant="mainClear"
                                             leftIcon={<FaPlus />}
-                                            onClick={() => setOpenDialogPosition(true)} 
+                                            onClick={() => setOpenDialogEdit(true)} 
                                             
                                         >
                                             Editar vaga
