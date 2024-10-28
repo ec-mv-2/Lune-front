@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: 'selector',
+    darkMode: ['selector', 'class'],
     content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -9,34 +9,22 @@ export default {
 	],
   theme: {
   	extend: {
-		fontFamily:{
-			"montserrat": "Montserrat"
-		},
-
-
-
-
+  		fontFamily: {
+  			'montserrat': 'Montserrat'
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-			whiteLight: "#e6e6e6",
-			blackDark: "#000",
-
-			lightBlueText: "#939ebf",
-			blueText: "#434f73",
-			darkBlueText: "#033859",
-
-			grey: '#dfdfdf',
-			mainBeige: "#b48f57",
-
-
-
-
-
-
+  			whiteLight: '#e6e6e6',
+  			blackDark: '#000',
+  			lightBlueText: '#939ebf',
+  			blueText: '#434f73',
+  			darkBlueText: '#033859',
+  			grey: '#dfdfdf',
+  			mainBeige: '#b48f57',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -77,6 +65,28 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
+  		},
+  		keyframes: {
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
+  		animation: {
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
   	}
   },
