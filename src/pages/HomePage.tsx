@@ -28,6 +28,7 @@ import {
 import { Input } from "@/components/ui/Input";
 
 interface jobPosition {
+    _id: string;
     title: string;
     enterprise: string;
     summary: string;
@@ -53,7 +54,7 @@ export function HomePage() {
     const [cep, setCep] = useState("");
     const [remuneracao, setRemuneracao] = useState("");
     
-    const [id, setId] = useState(Number);
+    const [id, setId] = useState('');
     const [newTitle, setNewTitle] = useState('');
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
@@ -178,58 +179,7 @@ export function HomePage() {
     };
 
 
-    const editJobPosition = async (e: React.FormEvent) => {
-        e.preventDefault();
-    
-        const editPosition = {
-
-        
-        title,
-        newTitle: newTitle,
-        enterprise: auth.user?.name as string || "Nome da Empresa", 
-        summary,
-        salary: parseFloat(remuneracao.replace(/[^\d.-]+/g, "")), 
-        skill: skills,
-        jobModel: workModel,
-        location,
-        startDate: startDate || "", 
-        endDate: endDate || "", 
-        degree: education,
-        experience,
-        isPrivate,
-
-        }
-
-        console.log("Nova posição sendo enviada:", editPosition);
-    
-        try {
-            const response = await api.editPosition(
-                editPosition.title,
-                editPosition.newTitle,
-                editPosition.enterprise,
-                editPosition.summary,
-                editPosition.salary,
-                editPosition.skill,
-                editPosition.jobModel,
-                editPosition.location,
-                editPosition.startDate,
-                editPosition.endDate,
-                editPosition.degree,
-                editPosition.experience,
-                editPosition.isPrivate
-            );
-            
-            // setPositions([...positions, response.position]);
-            console.log('Vaga criada com sucesso:', response.position);
-            setOpenDialogEdit(false);
-        } catch (error) {
-            console.error('Erro ao cadastrar vaga', error);
-        }
-
-    };
-
-
-    
+   
     const deleteJobPosition = async (e: React.FormEvent) => {
         e.preventDefault();
     

@@ -145,9 +145,8 @@ export const useBackendApi = () =>({
 
 
   editPosition: async (
-
+    id: String,
     title: String,
-    newTitle: String,
     enterprise: String,
     summary: String,
     salary: Number,
@@ -163,9 +162,8 @@ export const useBackendApi = () =>({
     const response = await axios.put(
       `${URL}/UpdatePosition`, 
       {
-        
+        id,
         title,
-        newTitle,
         enterprise,
         summary,
         salary,

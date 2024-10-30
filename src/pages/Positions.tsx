@@ -8,6 +8,7 @@ import { JobCard } from '../components/ui/jobCard';
 import { ScrollUp } from '../components/ui/scrollUp';
 
 interface jobPosition {
+  id: string;
   title: string;
   enterprise: string;
   summary: string;
