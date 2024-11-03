@@ -140,7 +140,6 @@ export function Help() {
                     </div>
                 </div>
             </div>
-
         </Page>
     )
 }
