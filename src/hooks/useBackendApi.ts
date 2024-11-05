@@ -215,4 +215,23 @@ export const useBackendApi = () =>({
     }
   },
 
+  getPosition: async (jobId: string) => {
+    const response = await axios.get(`${URL}/ListJob/${jobId}`);
+    return {
+      job: response.data.job,
+      contractor: response.data.contractor
+    };
+  },
+
+  addCandidate: async(jobId: string)=>{
+    const response = await axios.put(`${URL}/AddCandidate`, {jobId},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      job: response.data
+    }
+  },
+
 })

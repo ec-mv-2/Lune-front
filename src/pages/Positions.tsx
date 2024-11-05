@@ -8,7 +8,7 @@ import { JobCard } from '../components/ui/jobCard';
 import { ScrollUp } from '../components/ui/scrollUp';
 
 interface jobPosition {
-  id: string;
+  _id: string;
   title: string;
   enterprise: string;
   summary: string;
@@ -71,7 +71,7 @@ export function Positions() {
           </div>
 
           {positions.map((position, index) => (
-            <JobCard key={index} job={position} isContractor={false} />
+            <JobCard key={index} job={position} isContractor={false}/>
           ))}
 
         </div>

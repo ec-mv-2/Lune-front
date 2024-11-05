@@ -1,7 +1,62 @@
 import Page from "@/components/Page";
 import img from "../assets/unnamed.png";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useBackendApi } from "@/hooks/useBackendApi";
+import Button from "@/components/ui/button";
+import { AuthContext } from "@/contexts/AuthContext";
+import { IoCheckmark } from "react-icons/io5";
+import { ScrollUp } from "@/components/ui/scrollUp";
+interface jobProps{
+    title: string, 
+    enterprise: string, 
+    summary: string,
+    salary: number, 
+    skill: [],
+    jobModel: string,
+    location: string,
+    startDate: string,
+    endDate: string,
+    degree: string,
+    experience: number,
+    isPrivate: boolean,
+    candidates: []
+}
+
+interface contractorProps{
+    bio: string
+}
+
 
 export function Job() {
+
+    const [job, setJob] = useState<jobProps>()
+
+    const [contrator, setContrator] = useState<contractorProps>()
+
+    const auth = useContext(AuthContext)
+    const {jobId} = useParams()
+    const backendApi = useBackendApi()
+
+    useEffect(()=>{
+        async function getJob(){
+            if(jobId){
+                const data = await backendApi.getPosition(jobId)
+                if(data){
+                    setJob(data.job)
+                    setContrator(data.contractor)
+                }
+            }
+        }
+        getJob()
+    }, [])
+
+    async function addCandidate(){
+        if(!jobId){
+            return
+        }
+        await backendApi.addCandidate(jobId)
+    }
 
     return (
 
@@ -10,55 +65,61 @@ export function Job() {
             <div className=" max-w-[800px] mx-auto justify-center  my-32 flex-col flex ">
 
                 <div className=" w-full mx-auto flex justify-between">
-                    <p className="text-3xl text-darkBlueText">Desenvolvedor</p>
-                    <button className=" bg-blueText text-[20px] text-white px-5 rounded-md hover:brightness-75 transition-all duration-200 ">Candidatar-se a essa vaga</button>
+                    <p className="text-3xl text-darkBlueText">{job?.title}</p>
+                    {job?
+                        job?.candidates.length > 0?
+                        job.candidates.filter((candidate)=> candidate == auth.user?._id).length>0?
+                            <p className="flex items-center gap-3"><IoCheckmark/>Já candidatado</p>
+                        :   <Button leftIcon={null} rightIcon={null} onClick={()=>{addCandidate()}} variant="mediumSizeDark" >Candidatar-se</Button>
+                        :<Button leftIcon={null} rightIcon={null} onClick={()=>{addCandidate()}} variant="mediumSizeDark" >Candidatar-se</Button>   
+                    :null
+                    }
+                    
                 </div>
                 <div className="flex mt-2 mb-7">
-                    <p className=" text-1xl bg-gray-400 rounded-xl px-2 py-1 text-gray-700">Remoto</p>
+                    <p className=" text-1xl bg-gray-400 rounded px-2 py-1 text-gray-700">{job?.jobModel}</p>
                 </div>
 
 
 
                 <div className="w-[650px] ">
                     <div className="text-[17px] text-justify text-darkBlueText h-[16] ">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p>{job?.summary}</p>
                     </div>
                 </div>
 
 
                 <div className="w-[650px] flex ">
                     <div className="text-[17px]  text-blueText  my-5 ">
-                        <p>Remuneração: <span className="text-darkBlueText">R$: 200,00</span></p>
-                        <p>Data de inicio: <span className="text-darkBlueText">01/01/2024</span></p>
-                        <p>Data de término: <span className="text-darkBlueText">02/02/2024</span></p>
-                        <p>Localização: <span className="text-darkBlueText">Remoto</span></p>
+                        <p>Remuneração: <span className="text-darkBlueText">R$: {job?.salary}</span></p>
+                        <p>Data de inicio: <span className="text-darkBlueText">{job?.startDate}</span></p>
+                        <p>Data de término: <span className="text-darkBlueText">{job?.endDate}</span></p>
+                        <p>Localização: <span className="text-darkBlueText">{job?.location  }</span></p>
 
                     </div>
                 </div>
 
-                <div className="w-[650px] h-[150px] my-5 bg-whiteLight rounded-lg ">
+                <div className=" h-[150px] my-5 bg-whiteLight rounded ">
 
                     <p className="text-darkBlueText ml-[15px] my-[15px]"> Habilidades necessárias</p>
 
                     <div className="flex gap-5 flex-wrap ml-[15px] text-darkBlueText">
-
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">HTML</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">JAVASCRIPT</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">CSS</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">REACT.JS</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">HTML</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">HTML</p>
-                        <p className="bg-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200">HTML</p>
+                        {job?
+                        job.skill.map(skill =>{
+                            return(
+                                <p className="bg-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200">{skill}</p>
+                            )
+                        })
+                        :null
+                        }
+                        
                     </div>
                 </div>
 
-                <div className="w-[650px] h-[195px] my-5 bg-whiteLight rounded-lg ">
+                <div className="pb-3 my-5 bg-whiteLight rounded ">
                     <p className="text-darkBlueText ml-[15px] my-[15px] ">Formação acadêmica necessária</p>
-                    <div className="w-[600px] h-[100px] ml-[17px] my-2 bg-white rounded-lg ">
-                        <p className="text-darkBlueText ml-[15px] py-2">Ensino Superior</p>
-                        <p className="text-darkBlueText ml-[15px]">Análise e Desenvolvimento de Sistemas</p>
-                        <p className="text-darkBlueText ml-[15px]">Análise e Desenvolvimento de Sistemas</p>
+                    <div className=" mx-[17px] my-2 bg-white rounded ">
+                        <p className="text-darkBlueText ml-[15px] py-2">{job?.degree}</p>
                     </div>
                 </div>
                 <div className="flex items-center flex-col">
@@ -66,24 +127,22 @@ export function Job() {
                         <p className="text-[25px] text-blueText text-center">Contratante</p>
                         <img className="h-52 w-52 rounded-full  border-2y" src={img} />
                     </div>
-                    <div className="max-w-[520px] pb-5 bg-darkBlueText my-5 rounded-[35px] ">
+                    <div className="min-w-[520px] pb-5 bg-darkBlueText my-5 rounded-[35px] ">
 
                         <div className=" text-justify" >
 
                             <p className=" text-whiteLight pt-8 pb-[7px] pl-5 text-[22px]">Oscorp Inc.</p>
 
-                            <p className="text-whiteLight text-[15px] pl-5 pr-5"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                                laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            <p className="text-whiteLight text-[15px] pl-5 pr-5"> {contrator?.bio}</p>
 
                             <p className="text-whiteLight py-4 text-[13px] pl-5 pr-5">CPNJ: 53.495.563/0001-64</p>
 
                             <div className=" flex justify-center">
-                                <button className=" bg-mainBeige  text-white px-3 py-1 rounded-md hover:brightness-75 transition-all duration-200 ">Ver mais</button>
+                                <button className=" bg-mainBeige  text-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200 ">Ver mais</button>
                             </div>
                         </div>
                     </div>
+                    <ScrollUp />
                 </div>
                 
             </div>

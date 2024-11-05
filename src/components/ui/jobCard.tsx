@@ -2,7 +2,7 @@ import { CiBookmark, CiEdit, CiShare2, CiTrash, CiWarning } from "react-icons/ci
 import Button from './button';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogHeader } from "./dialog"; 
 import { Input } from "./Input";
-import { FormEvent, useContext, useState } from "react";
+import { AllHTMLAttributes, FormEvent, useContext, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { useNavigate } from "react-router-dom";
@@ -17,17 +17,18 @@ interface Job {
   location: string;
 }
 
-interface JobCardProps {
+interface JobCardProps extends AllHTMLAttributes<HTMLDivElement>{
   job: Job;
   isContractor: boolean; 
 }
 
-export function JobCard({ job}: JobCardProps) {
+export function JobCard({ job, ...props}: JobCardProps) {
   const { _id, title, enterprise, summary, skill, location } = job;
   
   const backendApi = useBackendApi()
   const cepApi = useCepApi();
 
+  const navigate = useNavigate()
 
 
   const [remuneracao, setRemuneracao] = useState("");
@@ -127,7 +128,7 @@ export function JobCard({ job}: JobCardProps) {
 
       
   return (
-    <div className="my-4">
+    <div className="my-4" {...props}>
       <div className="border border-lightBlueText rounded-md shadow-sm px-4 py-3 flex flex-col gap-3 w-full max-w-lg">
         <div className="flex flex-col md:flex-row justify-between items-start">
           <p className="text-lg font-semibold text-darkBlueText">{title}</p>
@@ -309,7 +310,7 @@ export function JobCard({ job}: JobCardProps) {
               </Dialog>
             </div>
           ) : (
-            <Button variant="strongBlue" onClick={() => console.log('Contratar Freelancer')}>
+            <Button variant="strongBlue" rightIcon={null} onClick={() =>navigate(`/Job/${_id}`)}>
               Se candidatar
             </Button>
           )}
