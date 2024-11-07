@@ -59,6 +59,28 @@ export const useBackendApi = () =>({
     }
   },
 
+  editSkill: async(oldNameSkill: string, newNameSkill: string)=>{
+    const response = await axios.put(`${URL}/EditSkill`, {oldNameSkill, newNameSkill},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      newNameSkill: response.data
+    }
+  },
+
+  deleteSkill: async(nameSkill: string)=>{
+    const response = await axios.put(`${URL}/DeleteSkill`, {nameSkill},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      nameSkill: response.data
+    }
+  },
+
   getUser: async (userId: string) => {
     const response = await axios.get(`${URL}/GetUser/${userId}`);
     return {
@@ -78,8 +100,30 @@ export const useBackendApi = () =>({
     }
   },
 
+  deleteExperience: async(expIndex: number)=>{
+    const response = await axios.put(`${URL}/DeleteExperience`, {expIndex},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      exp: response.data
+    }
+  },
+
   addAcademic: async(course: string, start: string, termination: string, college: string, education: string)=>{
     const response = await axios.put(`${URL}/AddAcademic`, {course, start, termination, college, education},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      academic: response.data
+    }
+  },
+
+  deleteAcademic: async(academicIndex: number)=>{
+    const response = await axios.put(`${URL}/DeleteAcademic`, {academicIndex},{
       headers: {
         Authorization: `Bearer ${storageData}`,
       },
@@ -206,6 +250,17 @@ export const useBackendApi = () =>({
 
   listPosition: async()=>{
     const response = await axios.get(`${URL}/listPosition`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      position: response.data
+    }
+  },
+
+  listPositionByUser: async()=>{
+    const response = await axios.get(`${URL}/listPositionByUser`, {
       headers: {
         Authorization: `Bearer ${storageData}`,
       },

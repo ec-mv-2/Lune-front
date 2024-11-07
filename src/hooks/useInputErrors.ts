@@ -4,6 +4,7 @@ export function useInputErrors(title: string){
     const [pattern, setPattern] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
+
     useEffect(()=>{
         if(title == "NOME") {
             setPattern("^[a-zA-Z\s]{3,}")

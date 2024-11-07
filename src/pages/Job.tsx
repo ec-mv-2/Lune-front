@@ -37,6 +37,11 @@ export function Job() {
     const auth = useContext(AuthContext)
     const {jobId} = useParams()
     const backendApi = useBackendApi()
+    const [reload, setReload] = useState(false)
+
+    function funcreload(){
+        setReload(!reload)
+    }
 
     useEffect(()=>{
         async function getJob(){
@@ -49,13 +54,14 @@ export function Job() {
             }
         }
         getJob()
-    }, [])
+    }, [reload])
 
     async function addCandidate(){
         if(!jobId){
             return
         }
         await backendApi.addCandidate(jobId)
+        funcreload()
     }
 
     return (

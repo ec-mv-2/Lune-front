@@ -584,71 +584,7 @@ export function HomePage() {
                                         )}
 
                                         {step === 2 && (
-                                            <form className="flex flex-col gap-3 text-darkBlueText" onSubmit={editJobPosition}>
-                                                <div className="m-">
-                                                <p className="text-lightBlueText text-sm hover:text-mainBeige"
-                                                onClick={() => {
-                                                setStep(1); 
-                                                    }}>
-                                                        Voltar</p>
-
-                                                <Input
-                                                    title="Remuneração"
-                                                    type="text"
-                                                    value={remuneracao}
-                                                    onChange={(e) => setRemuneracao(formatCurrency(e.target.value))}
-                                                
-                                                required
-                                                />
-
-                                                <Input title="Início de contrato" className="" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-
-                                                <Input title="Fim de contrato" value={endDate}
-                                                 onChange={(e) => setEndDate(e.target.value)} type="date"/>
-
-                                                <div className="mb-5">
-                                                    <p className="text-darkBlueText max-w-40 relative top-2 left-3 px-2 bg-whiteLight text-md">Modelo de trabalho</p>
-                                                    <select className="w-full rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none focus:border-lightBlueText px-3 py-4 m"
-                                                    value={workModel}
-                                                    onChange={(e) => setWorkModel(e.target.value)}
-                                                    >
-                                                        <option value="distancia">À distância</option>
-                                                        <option value="presencial">Presencial</option>
-                                                    </select>
-                                                    {workModel === 'presencial' && (
-                                                        <div>
-                                                        <Input title="CEP" onChange={(e)=>getAddress(e.target.value)}/>
-                                                  <Input readOnly title="Estado" value={location} onChange={(e)=>setLocation(e.target.value)}/>
-                                                        </div>
-                                                    )}
-
-                                                  <div className="flex align-middle justify-end mt-5">
-                                                    
-                                                    <div className="flex items-center space-x-2">
-                                                    <label htmlFor="isPrivate" className="text-gray-700">Vaga privada</label>
-                                                    <input
-                                                        id="isPrivate"
-                                                        type="checkbox"
-                                                        checked={isPrivate}
-                                                        onChange={(e) => setIsPrivate(e.target.checked)}
-                                                    />
-                                                </div>
-
-                                                    </div> 
-                                                </div>
-
-                                                </div>
-
-
-                                                <div className="flex">
-                                                    
-                                                <Button  variant="strongBlue" leftIcon={null} rightIcon={null} type="submit" onClick={() => console.log('Vaga publicada')}  >
-                                                    Editar vaga
-                                                </Button>
-                                                </div>
-                                               
-                                                
-                                            </form>
+                                            null
                                         )}
                                     </DialogContent>
                                 </Dialog>

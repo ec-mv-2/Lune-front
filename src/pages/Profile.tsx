@@ -6,16 +6,18 @@ import { TfiPlus } from "react-icons/tfi";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useBackendApi } from "@/hooks/useBackendApi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose
   } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/Input";
 import { format, add} from "date-fns";
+import { JobCard } from "@/components/ui/jobCard";
 interface experienceProps{
     name: string,
     start: string,
@@ -48,6 +50,25 @@ interface UserProps {
     isContractor: boolean
 }
 
+interface PositionsProps{
+    _id: string,
+    title: string,
+    enterprise: string,
+    summary: string,
+    salary: number,
+    skill: string,
+    jobModel: string,
+    location: string,
+    startDate: string,
+    endDate: string,
+    degree: string,
+    experience: number,
+    isPrivate: boolean,
+    candidates: [],
+    contractorId: string
+}
+
+
 const wait = () => new Promise((resolve) => setTimeout(resolve, 15));
 
 export function Profile () {
@@ -59,8 +80,11 @@ export function Profile () {
     const [openDialogUser, setOpenDialogUser] = useState(false)
     const [openDialogExperience, setOpenDialogExperience] = useState(false)
     const [openDialogAcademic, setOpenDialogAcademic] = useState(false)
-    const navigate = useNavigate()
     const [user, setUser] = useState<UserProps>()
+
+    const [myPositions, setMyPositions] = useState<PositionsProps[]>([])
+    const [reload, setReload] = useState(false)
+
     useEffect(()=>{
         
         function calcAge(){
@@ -86,7 +110,20 @@ export function Profile () {
         }
         getUser()
 
-    }, [auth.user, addSkill, addExperience, addAcademic])
+
+        async function listMyPositions(){
+            const data = await backendApi.listPositionByUser()
+            if(data){
+                setMyPositions(data.position)
+            }
+        }
+        listMyPositions()
+    }, [reload])
+
+
+    function funcreload(){
+        setReload(!reload)
+    }
 
 
     async function addSkill(e: FormEvent){
@@ -94,11 +131,27 @@ export function Profile () {
         if(!nameSkill){
             return
         }
-        console.log(nameSkill)
         const data = await backendApi.addSkill(nameSkill)
         if(data){
             setNameSkill("")
+            funcreload()
         }
+    }
+
+    async function editSkill(skill: string){
+        const data = await backendApi.editSkill(skill, nameSkill)
+        if(data){
+            setNameSkill("")
+            funcreload()
+        }
+    }
+
+    async function deleteSkill(skill: string){
+        if(!skill){
+            return
+        }
+        await backendApi.deleteSkill(skill)
+        funcreload()
     }
 
     async function addExperience(e: FormEvent){
@@ -113,6 +166,12 @@ export function Profile () {
         
         await backendApi.addExperience(data.cargo as string, startFormated,  terminationFormated, data.empresa as string, data.atividades as string)
         wait().then(() => setOpenDialogExperience(false));
+        funcreload()
+    }
+
+    async function deleteExperience(indexExp: number){
+        await backendApi.deleteExperience(indexExp-1)
+        funcreload()
     }
 
     async function addAcademic(e: FormEvent){
@@ -126,6 +185,12 @@ export function Profile () {
         const terminationFormated = format(addOnetermination, 'dd/MM/yyyy')
         await backendApi.addAcademic(data.curso as string, startFormated, terminationFormated, data.instituicao as string, data.formacao as string)
         wait().then(() => setOpenDialogAcademic(false));
+        funcreload()
+    }
+
+    async function deleteAcademic(academicIndex: number){
+        await backendApi.deleteAcademic(academicIndex-1)
+        funcreload()
     }
 
     async function updateUser(e: FormEvent){
@@ -135,6 +200,7 @@ export function Profile () {
 
         await backendApi.updateUser(data.name as string, data.bio as string)
         wait().then(() => setOpenDialogUser(false));
+        funcreload()
     }
 
     return(
@@ -192,7 +258,30 @@ export function Profile () {
                     </div>     
                 </div>
                 {user?.isContractor?
-                null
+                <div className="px-10 flex justify-between gap-y-20 my-20 text-blueText ">
+                    <div className="flex-1 w-96 ">
+                        <div className="bg-whiteLight p-5 min-h-52 rounded-md">
+                            <p>Minhas vagas publicadas</p>
+                            <div className="flex flex-col justify-center items-center gap-5 h-full ">
+                                {myPositions.map(position =>{
+                                    return(
+                                        <JobCard className="w-full " key={position._id} job={position} isContractor={false}/>
+                                    )
+                                })} 
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex justify-center">
+                        <div className="bg-whiteLight p-5 h-52 rounded-md max-w-96">
+                            <p>Avaliação de recrutadores</p>
+                            <div className="flex justify-center items-center h-full ">
+                                <p>Você não possui nenhuma avaliação.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
                 :
                 <div className="px-10 flex justify-between gap-y-20 mt-20 text-blueText">
                     <div className="flex-1 p-10 gap-y-20 flex flex-col">
@@ -223,10 +312,8 @@ export function Profile () {
                                                     </form>
                                                 </DialogContent>
                                             </Dialog>
-                                            
                                         </div>
                                     : null
-                                
                                     }
                                 </div>
                             </div>
@@ -243,16 +330,17 @@ export function Profile () {
                                                 <DialogHeader>
                                                 <DialogTitle className="text-darkBlueText">Editar habilidade</DialogTitle>
                                                 </DialogHeader>
-                                                <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={addSkill}>
+                                                <form className="flex flex-col gap-5 text-darkBlueText text-sm" >
                                                     <div className=" items-end ">
                                                         <Input defaultValue={skill} onChange={(e)=>setNameSkill(e.target.value)} title="Habilidade"/>
                                                     </div>
-                                                    <div className="flex  gap-3">
-                                                        <button className="flex-1 hover:bg-red-500 hover:text-red-800 transition-all duration-200 rounded-md">Deletar habilidade</button>
-                                                        <button className="h-9 bg-darkBlueText text-white rounded-md hover:brightness-75 transition-all duration-200 flex-1">Enviar</button>
-                                                    </div>
-                                                    
                                                 </form>
+                                                <div className="flex  gap-3  text-darkBlueText">
+                                                    <DialogClose className="flex-1 hover:bg-red-500 hover:text-white transition-all duration-200 rounded-md" onClick={()=>deleteSkill(skill)}>
+                                                        Deletar habilidade
+                                                    </DialogClose>
+                                                    <DialogClose className="h-9 bg-darkBlueText text-white rounded-md hover:brightness-75 transition-all duration-200 flex-1" onClick={()=>editSkill(skill)}>Enviar</DialogClose>
+                                                </div>
                                             </DialogContent>
                                         </Dialog>
                                     )
@@ -295,7 +383,7 @@ export function Profile () {
                             <div className="flex gap-3 flex-wrap mt-3">
                                 {user?
                                 user?.experience.length>0?
-                                user?.experience.map((experience: experienceProps) =>{
+                                user?.experience.map((experience: experienceProps, index) =>{
                                     return(
                                         <Dialog >
                                             <DialogTrigger className="w-full text-left">
@@ -309,7 +397,7 @@ export function Profile () {
                                                 <DialogHeader>
                                                 <DialogTitle className="text-darkBlueText">Editar experiência</DialogTitle>
                                                 </DialogHeader>
-                                                <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={addExperience}>
+                                                <form className="flex flex-col gap-5 text-darkBlueText text-sm">
                                                     <Input defaultValue={experience.name} name="cargo" title="Cargo"/>
                                                     <Input defaultValue={experience.company} name="empresa" title="Empresa"/>
                                                     <Input type="date" defaultValue={experience.start} name="inicio" title="Data de inicio"/>
@@ -318,11 +406,14 @@ export function Profile () {
                                                         <p className="text-darkBlueText max-w-20  relative top-2 left-3 px-2 bg-whiteLight text-sm">Atividades</p>
                                                         <textarea defaultValue={experience.activities} name="atividades" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
                                                     </div>
-                                                    <div className="flex  gap-3">
-                                                        <button className="flex-1 hover:bg-red-500 hover:text-red-800 transition-all duration-200 rounded-md">Deletar experiência</button>
-                                                        <button className="h-9 bg-darkBlueText text-white rounded-md hover:brightness-75 transition-all duration-200 flex-1">Enviar</button>
-                                                    </div>
                                                 </form>
+                                                <div className="flex  gap-3">
+                                                    <DialogClose className="flex-1 hover:bg-red-500 hover:text-white transition-all duration-200 rounded-md" onClick={()=>deleteExperience(index)}>
+                                                        Deletar experiência
+                                                    </DialogClose>
+                                                    <button className="h-9 bg-darkBlueText text-white rounded-md hover:brightness-75 transition-all duration-200 flex-1">Enviar</button>
+                                                </div>
+                                                
                                             </DialogContent>
                                         </Dialog>
                                     )
@@ -370,7 +461,7 @@ export function Profile () {
                             <div className="flex gap-3 flex-wrap mt-3">
                                 {user?
                                 user?.academic.length>0?
-                                user?.academic.map((academic: academicProps) =>{
+                                user?.academic.map((academic: academicProps, index) =>{
                                     return(
                                         <Dialog >
                                             <DialogTrigger className="w-full text-left">
@@ -390,8 +481,14 @@ export function Profile () {
                                                     <Input type="date" defaultValue={academic.start} name="inicio" title="Data de inicio"/>
                                                     <Input type="date" defaultValue={academic.termination} name="termino" title="Data de término"/>
                                                     <Input defaultValue={academic.education} name="formacao" title="Formação"/>
-                                                    <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
                                                 </form>
+                                                    
+                                                <div className="flex  gap-3">
+                                                    <DialogClose className="flex-1 hover:bg-red-500 hover:text-white transition-all duration-200 rounded-md" onClick={()=>deleteAcademic(index)}>
+                                                        Deletar formação
+                                                    </DialogClose>
+                                                    <button className="h-9 bg-darkBlueText text-white rounded-md hover:brightness-75 transition-all duration-200 flex-1">Enviar</button>
+                                                </div>
                                             </DialogContent>
                                         </Dialog>
                                     )

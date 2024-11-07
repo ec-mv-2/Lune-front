@@ -2,7 +2,7 @@ import { CiBookmark, CiEdit, CiShare2, CiTrash, CiWarning } from "react-icons/ci
 import Button from './button';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogClose, DialogHeader } from "./dialog"; 
 import { Input } from "./Input";
-import { AllHTMLAttributes, FormEvent, useContext, useState } from "react";
+import { AllHTMLAttributes, FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { useNavigate } from "react-router-dom";
@@ -126,10 +126,9 @@ export function JobCard({ job, ...props}: JobCardProps) {
     return formattedValue;
 };
 
-      
   return (
     <div className="my-4" {...props}>
-      <div className="border border-lightBlueText rounded-md shadow-sm px-4 py-3 flex flex-col gap-3 w-full max-w-lg">
+      <div className="border border-lightBlueText rounded-md shadow-sm px-4 py-3 flex flex-col gap-3 w-full max-w-lg" >
         <div className="flex flex-col md:flex-row justify-between items-start">
           <p className="text-lg font-semibold text-darkBlueText">{title}</p>
           <div className="flex gap-5 text-2xl text-gray-600 mt-2 md:mt-0">
@@ -273,10 +272,11 @@ export function JobCard({ job, ...props}: JobCardProps) {
 
 
                                                 <div className="flex">
-                                                    
-                                                <Button  variant="strongBlue" leftIcon={null} rightIcon={null} type="submit" onClick={() => console.log('Vaga publicada')}  >
-                                                    Editar vaga
-                                                </Button>
+                                                <DialogClose>
+                                                  <Button variant="strongBlue" leftIcon={null} rightIcon={null} type="submit" onClick={() => console.log('Vaga publicada')}  >
+                                                      Editar vaga
+                                                  </Button>
+                                                </DialogClose>
                                                 </div>
                                                
                                                 
