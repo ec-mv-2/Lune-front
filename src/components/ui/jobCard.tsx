@@ -99,6 +99,39 @@ export function JobCard({ job, ...props}: JobCardProps) {
 
     };
 
+
+   
+      // 
+      const deleteJobPosition = async () => {
+
+        const deletePosition = {
+        
+          _id
+        
+        }
+
+        console.log("Posição sendo:", deletePosition, _id);
+    
+        try {
+            await backendApi.deletePosition(
+                _id,
+ 
+            );
+            
+            // setPositions([...positions, response.position]);
+            setOpenDialogEdit(false);
+        } catch (error) {
+            console.error('Erro ao deletar vaga', error);
+        }
+
+    };
+
+    //
+
+
+
+    
+
     function getAddress(cep: string) {
       if (cep.length === 8) {
           const data = cepApi.getAddress(cep);
@@ -303,7 +336,7 @@ export function JobCard({ job, ...props}: JobCardProps) {
                       <Button variant="mediumSizeLight" leftIcon={null} rightIcon={null}  onClick={() => console.log('Cancelar')}>Cancelar</Button>
                     </DialogClose>
                     <DialogClose asChild>
-                      <Button variant="mediumSizeDark" leftIcon={null} rightIcon={null}  onClick={() => console.log('Vaga deletada')}>Deletar</Button>
+                      <Button variant="mediumSizeDark" leftIcon={null} rightIcon={null} type="submit"  onClick={() =>  {deleteJobPosition()}}>Deletar</Button>
                     </DialogClose>
                   </div>
                 </DialogContent>

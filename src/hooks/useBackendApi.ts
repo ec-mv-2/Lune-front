@@ -233,11 +233,11 @@ export const useBackendApi = () =>({
   },
   deletePosition: async (
 
-    title: String,
+    id: String,
    
   ) => {
     await axios.delete(
-      `${URL}/DeletePosition/${title}`, 
+      `${URL}/DeletePosition/${id}`, 
       {
         headers: {
           Authorization: `Bearer ${storageData}`,
