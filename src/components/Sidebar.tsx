@@ -28,7 +28,7 @@ export function Sidebar({ sidebarIsOpen, closeSidebar }: SidebarProps) {
             )}
 
             <ul
-                className={`text-3xl lg:text-base absolute top-32 lg:top-28  left-2 h-[calc(100vh-235px)] lg:h-[calc(100vh-110px)] w-[400px] lg:w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
+                className={`text-2xl lg:text-base absolute top-32 lg:top-28  left-2 h-[calc(100vh-235px)] lg:h-[calc(100vh-110px)] w-[400px] lg:w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
                     sidebarIsOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >

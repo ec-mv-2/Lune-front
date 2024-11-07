@@ -218,12 +218,12 @@ export function HomePage() {
                 <div className=" lg:flex justify-items-center lg:justify-between lg:items-start mx-32 lg:mx-48 my-24 lg:space-x-8 pt-14 lg:pt-0">
                     <div className="lg:w-1/4">
                         <div className="flex flex-col items-center lg:justify-center">
-                            <p className="text-6xl text-center lg:text-xl text-darkBlueText">
+                            <p className="text-5xl text-center lg:text-xl text-darkBlueText">
                                 Boas vindas, <span className="text-mainBeige"> {userType === 'contractor' ? 'contratante' : 'freelancer'}!</span>
                             </p>
                             <div className="mt-6 mb-8 flex justify-center w-full">
                             <img
-                                className="h-96 lg:h-52  rounded-full object-cover border-2 border-grey"
+                                className="h-72 lg:h-52  rounded-full object-cover border-2 border-grey"
                                 src={img}
                                 alt="User"
                             />
