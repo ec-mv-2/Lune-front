@@ -26,6 +26,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/Input";
+import { FaRegEdit } from "react-icons/fa";
+import { CiTrash } from "react-icons/ci";
 
 interface jobPosition {
     _id: string;
@@ -208,34 +210,26 @@ export function HomePage() {
     };
 
 
-
-    const exampleJob = {
-        title: "Desenvolvedor Full Stack",
-        enterprise: "Tech Company",
-        summary: "Vaga para desenvolvedor com experiência em React, Node.js, e TypeScript.",
-        skill: ['React', 'Node.js', 'TypeScript'],
-        location: "São Paulo, SP",
-        salary: 8000,
-        jobModel: "Remoto",
-        startDate: "01/11/2024",
-        endDate: "01/05/2025",
-        degree: "Ensino superior",
-        experience: "3 anos",
-    };
     
 
     return (
         <div className="min-h-screen">
             <Page className="bg-grey">
-                <div className="flex justify-between items-start mx-48 my-24 space-x-8">
-                    <div className="w-1/4">
-                        <div className="flex flex-col items-center justify-center">
-                            <p className="text-xl text-darkBlueText">
+                <div className=" lg:flex justify-items-center lg:justify-between lg:items-start mx-32 lg:mx-48 my-24 lg:space-x-8 pt-14 lg:pt-0">
+                    <div className="lg:w-1/4">
+                        <div className="flex flex-col items-center lg:justify-center">
+                            <p className="text-6xl text-center lg:text-xl text-darkBlueText">
                                 Boas vindas, <span className="text-mainBeige"> {userType === 'contractor' ? 'contratante' : 'freelancer'}!</span>
                             </p>
-                            <img className="h-52 w-52 rounded-full object-cover border-2 border-grey mt-6 mb-8" src={img} alt="User" />
-
-                            <Button
+                            <div className="mt-6 mb-8 flex justify-center w-full">
+                            <img
+                                className="h-96 lg:h-52  rounded-full object-cover border-2 border-grey"
+                                src={img}
+                                alt="User"
+                            />
+                            </div>
+                             <div className=" ">
+                                <Button
                                 variant="simple"
                                 onClick={() => goTo(`/Profile/${auth.user?._id}`)}
                             >
@@ -248,14 +242,17 @@ export function HomePage() {
                                 Métricas
                             </Button>
                         </div>
+                        </div>
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 pt-20 lg:pt-0">
                         {userType === 'freelancer' && (
                             <>
-                                <p className="text-darkBlueText text-3xl pb-4 text-center">Vagas que talvez te interessem</p>
+                                <p className="text-darkBlueText text-5xl lg:text-3xl pb-4 text-center">Vagas que talvez te interessem</p>
                                 <Dropdown onChange={setOrder} />
-                                
+                                <p className="text-2xl lg:text-lg text-gray-500 text-center my-5">
+                                    Você ainda não possui vagas recomendadas. Atualize as informações de seu perfil para receber recomendações ou confira a página de vagas.
+                                </p>
                                 <Pagination
                                     totalPages={Math.ceil(positions.length / itemsPerPage)}
                                     currentPage={currentPage}
@@ -265,10 +262,13 @@ export function HomePage() {
                         )}
                         {userType === 'contractor' && (
                             <>
-                                <p className="text-darkBlueText text-3xl pb-4 text-center">Freelancers disponíveis</p>
+                            <div>
+                                <p className="text-darkBlueText text-5xl lg:text-3xl pb-4 text-center">Freelancers disponíveis</p>
                                 
                                 <Dropdown onChange={setOrder} />
-                                
+                                <p className="text-2xl lg:text-lg text-gray-500 text-center mt-5">
+                                    Você ainda não possui freelancers recomendados. Atualize as informações de suas vagas para receber recomendações ou confira a página de freelancers disponíveis.
+                                </p>
                                 {positions.map((position, index) => (
                                   <JobCard key={index} job={position} isContractor={false} />
                                  ))}
@@ -283,12 +283,13 @@ export function HomePage() {
                                     currentPage={currentPage}
                                     onPageChange={setCurrentPage}
                                 />
-                                
+                                </div>
                             </>
                         )}
+                        
                     </div>
 
-                    <div className="w-1/6 flex flex-col items-right space-y-6 pt-16">
+                    <div className="lg:w-1/6 flex flex-col items-right space-y-6 pt-16 mb-64 lg:mb-0">
                         {userType === 'freelancer' && (
                             <>
                                 <Button
@@ -323,6 +324,7 @@ export function HomePage() {
                         )}
                         {userType === 'contractor' && (
                             <>
+                            <div className="lg:w-1/6 flex flex-col items-right space-y-6 pt-16  lg:mb-0">
                                 <Dialog onOpenChange={setOpenDialogPosition} open={openDialogPosition}>
                                     <DialogTrigger>
                                         <Button
@@ -334,9 +336,9 @@ export function HomePage() {
                                             Publicar uma vaga
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="bg-whiteLight  py-10 px-8">
+                                    <DialogContent className="bg-whiteLight md:min-w-[700px] lg:min-w-[600px]  py-10 px-8 text-3xl lg:text-base">
                                         <DialogHeader>
-                                            <DialogTitle className="text-darkBlueText text-2xl">Publicar uma vaga</DialogTitle>
+                                            <DialogTitle className="text-darkBlueText text-5xl lg:text-2xl">Publicar uma vaga</DialogTitle>
                                             <p className="text-gray-500">Encontre o freelancer ideal para o seu serviço.</p>
                                         </DialogHeader>
 
@@ -397,7 +399,7 @@ export function HomePage() {
                                         {step === 2 && (
                                             <form className="flex flex-col gap-3 text-darkBlueText" onSubmit={createJobPosition}>
                                                 <div className="m-">
-                                                <p className="text-lightBlueText text-sm hover:text-mainBeige"
+                                                <p className="text-lightBlueText lg:text-sm hover:text-mainBeige"
                                                 onClick={() => {
                                                 setStep(1); 
                                                     }}>
@@ -469,7 +471,7 @@ export function HomePage() {
                                     <DialogTrigger>
                                         <Button
                                             variant="mainClear"
-                                            leftIcon={<FaPlus />}
+                                            leftIcon={< CiTrash />}
                                             onClick={() => setOpenDialogDelete(true)} 
                                             
                                         >
@@ -515,7 +517,7 @@ export function HomePage() {
                                     <DialogTrigger>
                                         <Button
                                             variant="mainClear"
-                                            leftIcon={<FaPlus />}
+                                            leftIcon={<FaRegEdit  />}
                                             onClick={() => setOpenDialogEdit(true)} 
                                             
                                         >
@@ -588,8 +590,9 @@ export function HomePage() {
                                         )}
                                     </DialogContent>
                                 </Dialog>
-
+                                </div>
                             </>
+                            
                         )}
                     </div>
                 </div>

@@ -29,7 +29,7 @@ export function Dropdown({ onChange }: DropdownProps) {
     };
 
     return (
-        <div className="flex text-left items-center justify-center">
+        <div className="flex text-left items-center justify-center text-2xl lg:text-base">
             <p className="mr-2 text-darkBlueText">Ordenar por:</p>
             <div className='text-left'>
                 <Select onValueChange={orderChange} value={selectedOrder}>

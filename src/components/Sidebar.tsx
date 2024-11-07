@@ -22,13 +22,13 @@ export function Sidebar({ sidebarIsOpen, closeSidebar }: SidebarProps) {
            
             {sidebarIsOpen && (
                 <div 
-                    className="fixed inset-0 bg-transparent z-10" 
+                    className="fixed inset-0 bg-transparent z-96 " 
                     onClick={closeSidebar} 
                 />
             )}
 
             <ul
-                className={`absolute top-28 left-0 h-screen w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
+                className={`text-3xl lg:text-base absolute top-32 lg:top-28  left-2 h-[calc(100vh-235px)] lg:h-[calc(100vh-110px)] w-[400px] lg:w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
                     sidebarIsOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
