@@ -141,7 +141,7 @@ export function Job() {
 
                             <p className="text-whiteLight text-[15px] pl-5 pr-5"> {contrator?.bio}</p>
 
-                            <p className="text-whiteLight py-4 text-[13px] pl-5 pr-5">CPNJ: 53.495.563/0001-64</p>
+                  
 
                             <div className=" flex justify-center">
                                 <button className=" bg-mainBeige  text-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200 ">Ver mais</button>

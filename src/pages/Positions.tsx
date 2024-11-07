@@ -17,6 +17,7 @@ interface jobPosition {
 }
 
 export function Positions() {
+  const [reload, setReload] = useState(false)
   const [order, setOrder] = useState('Mais relevante');
   const [positions, setPositions] = useState<jobPosition[]>([]);
   const backEndApi = useBackendApi();
@@ -31,9 +32,14 @@ export function Positions() {
     }
 
     fetchPositions();
-  }, []);
+  }, [reload]);
 
-  useEffect(() => {
+
+  function funcreload(){
+    setReload(!reload)
+}
+
+/*  useEffect(() => {
     async function fetchPositions() {
       const data = await backEndApi.listPosition();
       
@@ -46,7 +52,7 @@ export function Positions() {
   
     fetchPositions();
   }, []);
-
+*/
   
   return (
     <Page className="flex justify-center">
