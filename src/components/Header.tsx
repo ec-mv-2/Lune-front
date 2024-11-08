@@ -14,7 +14,7 @@ import { Sidebar } from './Sidebar';
 
 export function Header() {
   const navigate = useNavigate();
-  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+  const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
   const location = useLocation();
   const [notificationIsOpen, setNotificationIsOpen] = useState(false);
   const [profileIsOpen, setProfileIsOpen] = useState(false);
