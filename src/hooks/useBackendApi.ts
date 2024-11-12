@@ -259,6 +259,19 @@ export const useBackendApi = () =>({
     }
   },
 
+
+  listFreelancer: async()=>{
+    const response = await axios.get(`${URL}/listFreelancer`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      freelancer: response.data
+    }
+  },
+
+
   listPositionByUser: async()=>{
     const response = await axios.get(`${URL}/listPositionByUser`, {
       headers: {

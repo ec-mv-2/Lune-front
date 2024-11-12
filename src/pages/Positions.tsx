@@ -16,11 +16,40 @@ interface jobPosition {
   location: string;
 }
 
+interface freelancer {
+  _id: string
+  name: String,
+    email: String,
+    password: String,
+    cep: String,
+    state: String,
+    cpf: String,
+    birthDate: String,
+    bio: String,
+    position: String,
+    skills: [],
+    experience: [],
+    academic: [],
+    isContractor: Boolean
+}
+
 export function Positions() {
   const [reload, setReload] = useState(false)
   const [order, setOrder] = useState('Mais relevante');
   const [positions, setPositions] = useState<jobPosition[]>([]);
+  const [freelancers, setFreelancers] = useState<freelancer[]>([]);
   const backEndApi = useBackendApi();
+
+
+  useEffect(() => {
+    async function fetchFreelancers(){
+      const data = await backEndApi.listFreelancer();
+      console.log(data)
+      if (data){
+        setFreelancers(data.freelancer)
+      }
+    }
+  })
 
   useEffect(() => {
     async function fetchPositions() {
@@ -55,6 +84,9 @@ export function Positions() {
 */
   
   return (
+  
+  
+
     <Page className="flex justify-center">
       <div className="flex gap-12">
         <div className="mt-20 flex flex-col gap-2 pt-10 ">
