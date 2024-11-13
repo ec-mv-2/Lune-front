@@ -43,34 +43,33 @@ export function Help() {
                     <div className=" justify-center">
                         <Accordion type="single" collapsible  >
                             <AccordionItem value="item-1" className="py-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText ">
-                                <AccordionTrigger ><p>Posso ter os perfis de freelancer e contratante ao mesmo tempo?</p></AccordionTrigger>
+                                <AccordionTrigger ><p className="text-left">O que é o Lune?</p></AccordionTrigger>
                                 <AccordionContent>
-                                Não, no momento só é possivel ter ou uma conta de     
+                                    O Lune é um sistema web focado em admissão de freelancers, onde seu objetivo é unir usuários que desejam 
+                                    contratar um profissional para um serviço curto e sem contrato, e usuários que desejam proporcionar esse serviço.
                                 </AccordionContent>
                             </AccordionItem>
 
 
-                            <AccordionItem value="item-2" className="py-0 border-blueText border-t-[1] transition-all duration-200 text-darkBlueText ">
+                            <AccordionItem value="item-2" className="py-0 border-blueText border-t-[1] transition-all duration-200  text-darkBlueText">
                                 <AccordionTrigger><p>Como realizo a publicação de uma vaga?</p></AccordionTrigger>
                                 <AccordionContent>
-                                A publicação da vaga só poderá ser realizada no perfil do contratante onde a opção está disponivel. Todas as informações da 
-                                vaga deverão ser obrigatoriamente preenchidas para serem publicadas.
+                                    A publicação da vaga só poderá ser realizada no perfil do contratante onde a opção está disponivel. Todas as informações da 
+                                    vaga deverão ser obrigatoriamente preenchidas para serem publicadas.
                                 </AccordionContent>
                             </AccordionItem>
 
-                            <AccordionItem value="item-3" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                                <AccordionTrigger><p>Onde posso localizar as informações de contato do contratante?</p></AccordionTrigger>
+                            <AccordionItem value="item-3" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200  text-darkBlueText">
+                                <AccordionTrigger><p className="text-left">Onde posso localizar as informações de contato do contratante?</p></AccordionTrigger>
                                 <AccordionContent>
-                                    Todas as informações relacionadas ao contratante estaram disponíveis no perfil do contratante.
+                                    Todas as informações relacionadas ao contratante estarão disponíveis no perfil do contratante.
                                 </AccordionContent>
                             </AccordionItem>
 
                             <AccordionItem value="item-4" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                                <AccordionTrigger><p>?</p></AccordionTrigger>
+                                <AccordionTrigger><p className="text-left">Posso ter os perfis de freelancer e contratante ao mesmo tempo?</p></AccordionTrigger>
                                 <AccordionContent className=" text-darkBlueText">
-                                    Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                    dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                    printing
+                                    Não, no momento só é possivel ter uma conta de cada vez.
                                 </AccordionContent>
                             </AccordionItem>
                         </Accordion>
@@ -79,46 +78,39 @@ export function Help() {
                
 
                 <div className="text-2xl text-darkBlueText mt-20" id="Perfil-text">
-                    <p className="">Perfil</p>
+                    <p className="">Envio de dúvidas</p>
                 </div>
                 <div className="w-[450px] ">
                 <div className="mb-20" id="Perfil">
                     <Accordion type="single" collapsible>
                         <AccordionItem value="item-1" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>?</p></AccordionTrigger>
+                            <AccordionTrigger><p>Como realizo o envio de uma dúvida?</p></AccordionTrigger>
                             <AccordionContent>
-                                Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                printing
+                                A dúvida pode ser enviada através do formulário que está locazalido no final desta página.
                             </AccordionContent>
                         </AccordionItem>
 
 
                         <AccordionItem value="item-2" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                            <AccordionTrigger><p>Todas as dúvidas são anônimas?</p></AccordionTrigger>
                             <AccordionContent>
-                                Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                printing
+                                Não, no momento solicitamos apenas o nome do usuário como forma de identificação.
                             </AccordionContent>
                         </AccordionItem>
 
                         <AccordionItem value="item-3" className="py-0   border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                            <AccordionTrigger><p>Como minha dúvida será respondida?</p></AccordionTrigger>
                             <AccordionContent>
-                                Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                printing
+                                As dúvidas serão respondidas através do chat, nossos administradores entrarão em contato com a explicação da dúvida que foi enviada pelo formulário.
+                                As respostas podem variar de 3 à 5 dias úteis devido a demanda da equipe.
                             </AccordionContent>
                         </AccordionItem>
 
 
                         <AccordionItem value="item-4" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                            <AccordionTrigger><p>?</p></AccordionTrigger>
                             <AccordionContent>
-                                Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                printing
+                                
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
