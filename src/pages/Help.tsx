@@ -5,14 +5,29 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
+import { useBackendApi } from "@/hooks/useBackendApi";
+import { FormEvent, useState } from "react";
 
 export function Help() {
+    const backEndApi = useBackendApi()
+    const [name, setName] = useState("")
+    const [question, setQuestion] = useState("")
+    async function sendHelp(e: FormEvent){
+        e.preventDefault();
+        const data = await backEndApi.sendHelp(name,question)
+        console.log(name)
+        if (data){setName("") 
+            setQuestion("")
+        }
+    }
+        
 
 
     return (
         <Page className="">
-            <div className=" justify-center items-center my-10 flex-col flex">
+            <div className=" max-w-[500px] mx-auto items-center my-10 flex-col flex">
 
                 <div className="   ">
 
@@ -68,11 +83,11 @@ export function Help() {
                 </div>
                
 
-                <div className="text-2xl text-darkBlueText mt-20 " id="Perfil-text">
+                <div className="text-2xl text-darkBlueText mt-20" id="Perfil-text">
                     <p className="">Perfil</p>
                 </div>
                 <div className="w-[450px] ">
-                <div className="h-64" id="Perfil">
+                <div className="mb-20" id="Perfil">
                     <Accordion type="single" collapsible>
                         <AccordionItem value="item-1" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
                             <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
@@ -120,24 +135,25 @@ export function Help() {
                 <div className=" text-3xl text-darkBlueText h-16 ">
                     Ainda precisa de ajuda?
                 </div>
-                <div className="Container-needform">
-                    <div className="Container-form bg-whiteLight h-96 w-auto border rounded-tr-3xl rounded-tl-3xl py-5 ">
+                <div className="Container-needform w-full ">
+                    <form className=" bg-whiteLight  border rounded-tr-3xl rounded-3xl py-5" onSubmit={sendHelp}>
                         <div className="FormTextHelp-text">
-                            <div className="texto 1 ml-10 mr-10">
-                                <Input title="Nome"/>
+                            <div className="texto 1 ml-10 mr-10 text-darkBlueText text-sm">
+                                <Input title="Nome" value={name} onChange={(e) => setName(e.target.value)}/>
 
                             </div>
                             <div className="texto 2 ml-10 mr-10">
-                            <Input title="E-mail"/>
-                            </div>
-                            <div className="texto 2 ml-10 mr-10">
-                                <p className="text-darkBlueText max-w-[109px]  relative top-2 left-3 px-2 bg-whiteLight text-sm">Comentários</p>
-                                <textarea name="comentarios" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200" />
-                            </div>
 
-                            <button className=" bg-lightBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                            </div>
+                            <div className="text 2 ml-10 mr-10">
+                                <p className="text-darkBlueText max-w-[150px]  relative top-2 left-3 px-2 bg-whiteLight text-sm">Escreva sua dúvida</p>
+                                <textarea name="comentarios" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200" value={question} onChange={(e) => setQuestion(e.target.value)}/>
+                            </div>
+                            <div className="flex justify-center">
+                            <Button variant="mediumSizeDark" onClick={()=>sendHelp} leftIcon={null} rightIcon={null}>Enviar</Button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </Page>

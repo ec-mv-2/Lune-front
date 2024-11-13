@@ -302,4 +302,15 @@ export const useBackendApi = () =>({
     }
   },
 
+  sendHelp: async(name: string, question: string)=>{
+    const response = await axios.post(`${URL}/SendHelp`, {name, question},{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+  })
+  return{
+    newQuestion: response.data
+  }
+  }
+
 })
