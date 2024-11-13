@@ -13,7 +13,7 @@ interface Job {
   title: string;
   enterprise: string;
   summary: string;
-  skill: string;
+  skill: string[];
   location: string;
 }
 
@@ -173,7 +173,8 @@ export function JobCard({ job, ...props}: JobCardProps) {
         </div>
         <p className="text-md text-gray-500 italic">Empresa: <span className="font-semibold text-blueText">{enterprise}</span></p>
         <p className="text-sm w-full text-gray-500 font-medium">Resumo: <span className="text-darkBlueText">{summary}</span></p>
-        <p className="text-sm text-gray-500 font-medium">Habilidades necessárias: <span className="text-darkBlueText">{skill}</span></p>
+        
+        <p className="text-sm text-gray-500 font-medium flex gap-1 items-center ">Habilidades necessárias: <span className="text-darkBlueText flex gap-1">{skill.map(name => {return(<p className="bg-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200"> {name}</p>)})}</span></p>
         <p className="text-xs text-gray-500">Localização: {location}</p>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-3 ">

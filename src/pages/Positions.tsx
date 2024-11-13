@@ -1,11 +1,13 @@
 import Page from "@/components/Page";
 import { BiSliderAlt } from "react-icons/bi";
 import { CiBookmark } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { Dropdown } from '../components/ui/dropdown';
 import { JobCard } from '../components/ui/jobCard';
 import { ScrollUp } from '../components/ui/scrollUp';
+import { AuthContext } from "@/contexts/AuthContext";
+import { FreelancerCard } from "@/components/ui/freelancerCard";
 
 interface jobPosition {
   _id: string;
@@ -18,20 +20,25 @@ interface jobPosition {
 
 interface freelancer {
   _id: string
-  name: String,
-    email: String,
-    password: String,
-    cep: String,
-    state: String,
-    cpf: String,
-    birthDate: String,
-    bio: String,
-    position: String,
+  name: string,
+    email: string,
+    password: string,
+    mainJob: string,
+    location: string,
+    education: string[],
+    cep: string,
+    state: string,
+    cpf: string,
+    birthDate: string,
+    bio: string,
+    position: string,
     skills: [],
     experience: [],
     academic: [],
-    isContractor: Boolean
+    isContractor: boolean
 }
+
+
 
 export function Positions() {
   const [reload, setReload] = useState(false)
@@ -40,16 +47,7 @@ export function Positions() {
   const [freelancers, setFreelancers] = useState<freelancer[]>([]);
   const backEndApi = useBackendApi();
 
-
-  useEffect(() => {
-    async function fetchFreelancers(){
-      const data = await backEndApi.listFreelancer();
-      console.log(data)
-      if (data){
-        setFreelancers(data.freelancer)
-      }
-    }
-  })
+  const auth = useContext(AuthContext)
 
   useEffect(() => {
     async function fetchPositions() {
@@ -61,6 +59,15 @@ export function Positions() {
     }
 
     fetchPositions();
+    async function fetchFreelancers(){
+      const data = await backEndApi.listFreelancer();
+      console.log(data)
+      if (data){
+        setFreelancers(data.freelancer)
+      }
+    }
+
+    fetchFreelancers()
   }, [reload]);
 
 
@@ -108,9 +115,16 @@ export function Positions() {
             <p className="text-xs">Vagas Salvas</p>
           </div>
 
-          {positions.map((position, index) => (
-            <JobCard key={index} job={position} isContractor={false}/>
-          ))}
+
+        {
+          auth.user?.isContractor? 
+          freelancers.map((freelancerss, index) => (
+            <FreelancerCard key={index} freelancer={freelancerss}/>
+          )) 
+        : 
+        positions.map((position, index) => (
+          <JobCard key={index} job={position} isContractor={false}/>
+        ))}
 
         </div>
       </div>

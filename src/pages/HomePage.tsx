@@ -34,9 +34,10 @@ interface jobPosition {
     title: string;
     enterprise: string;
     summary: string;
-    skill: string;
+    skill: [];
     location: string;
   }
+
 export function HomePage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [positions, setPositions] = useState<jobPosition[]>([]);
@@ -60,7 +61,7 @@ export function HomePage() {
     const [newTitle, setNewTitle] = useState('');
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
-    const [skills, setSkills] = useState('');
+    const [skills, setSkills] = useState<string[]>([]);
     const [education, setEducation] = useState('Ensino médio');
     const [jobModel, setJobModel] = useState('');
     const [location, setLocation] = useState('');
@@ -354,12 +355,13 @@ export function HomePage() {
                                                     onChange={(e) => setSummary(e.target.value)}
                                                     required />
 
-                                                    {/* <Input title="Habilidades desejadas" className="" 
+                                                    <Input title="Habilidades desejadas" className="" 
                                                     value={skills}
-                                                    // onChange={(e) => setSkills(e.target.value.split(','))}
-                                                    placeholder="Habilidades desejadas para a vaga (separadas por vírgulas)"
+                                                    onChange={(e) =>{console.log(skills)  
+                                                        setSkills(e.target.value.split(','))}}
+                                                    placeholder="Habilidades desejadas para a vaga (separadas por vírgulas, sem espaço)"
                                                     required
-                                                    /> */}
+                                                    />
 
                                                     <div className="mb-5">
                                                     <p className="text-darkBlueText max-w-28 relative top-2 left-3 px-2 bg-whiteLight text-md"> Escolaridade </p>

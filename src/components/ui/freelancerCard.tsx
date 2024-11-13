@@ -7,13 +7,29 @@ interface Freelancer {
     name: string;
     mainJob: string;
     skills: string[];
-    experience: string[];
-    location: string;
-    education: string[];
+    experience: [];
+    state: string;
+    academic: [];
+}
+
+interface experienceProps{
+    name: string,
+    start: string,
+    termination: string,
+    company: string,
+    activities: string
 }
 
 interface FreelancerCardProps {
     freelancer: Freelancer;  
+}
+
+interface academicProps{
+    course: string,
+    start: string,
+    termination: string,
+    college: string,
+    education: string
 }
 
 
@@ -36,9 +52,33 @@ export function FreelancerCard({ freelancer }: FreelancerCardProps) {
                 </div>
                 <p className="text-md text-blueText italic"><span className="font-semibold">{freelancer.mainJob}</span></p>
                 <p className="text-sm text-gray-500 font-medium">Habilidades: <span className="text-darkBlueText">{freelancer.skills.join(', ')}</span></p>
-                <p className="text-sm text-gray-500 font-medium">Experiências: <span className="text-darkBlueText">{freelancer.experience.join(', ')}</span></p>
-                <p className="text-sm text-gray-500 font-medium">Escolaridade: <span className="text-darkBlueText">{freelancer.education.join(', ')}</span></p>
-                <p className="text-xs text-gray-500">Localização: {freelancer.location}</p>
+                <p className="text-sm text-gray-500 font-medium">Experiências: <span className="text-darkBlueText">{ 
+                
+            
+                freelancer?.experience.length>0?
+                freelancer?.experience.map((experience: experienceProps) =>{ return (experience.name)} ) : <p>Não tem experiência</p>
+
+                
+                }
+                
+                
+                </span></p>
+                <p className="text-sm text-gray-500 font-medium">Escolaridade: <span className="text-darkBlueText">{
+                
+                freelancer?.academic.length>0?
+                                
+                                
+                                
+                                freelancer?.academic.map((academic: academicProps) =>{
+                                    return(academic.course) 
+                                
+                                
+                                
+                                }) : <p>não tem academico</p>
+                                
+                            }
+                                </span></p>
+                <p className="text-xs text-gray-500">Localização: {freelancer.state}</p>
 
                 <div className="flex flex-col md:flex-row justify-between items-center mt-3">
                     <p className="text-sm cursor-pointer text-darkBlueText hover:text-mainBeige">Ver mais</p>

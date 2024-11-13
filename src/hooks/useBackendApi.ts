@@ -150,7 +150,7 @@ export const useBackendApi = () =>({
     enterprise: String,
     summary: String,
     salary: Number,
-    skill: String,
+    skill: String[],
     jobModel: String,
     location: String,
     startDate: String,
@@ -261,7 +261,7 @@ export const useBackendApi = () =>({
 
 
   listFreelancer: async()=>{
-    const response = await axios.get(`${URL}/listFreelancer`, {
+    const response = await axios.get(`${URL}/ListFreelancers`, {
       headers: {
         Authorization: `Bearer ${storageData}`,
       },
