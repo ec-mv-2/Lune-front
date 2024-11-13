@@ -36,42 +36,37 @@ export function Help() {
                     </div>
 
                     <div className="text-2xl text-darkBlueText h-9" id="FAQ-text">
-                        <p>FAQ</p>
+                        <p>Dúvidas frequentes</p>
                     </div>
 
                     <div className="w-[450px] ">
-                    <div className=" justify-center" id="Conteudo-FAQ">
+                    <div className=" justify-center">
                         <Accordion type="single" collapsible  >
                             <AccordionItem value="item-1" className="py-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText ">
-                                <AccordionTrigger ><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                                <AccordionTrigger ><p>Posso ter os perfis de freelancer e contratante ao mesmo tempo?</p></AccordionTrigger>
                                 <AccordionContent>
-                                    Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                    dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                    printing
+                                Não, no momento só é possivel ter ou uma conta de     
                                 </AccordionContent>
                             </AccordionItem>
 
 
                             <AccordionItem value="item-2" className="py-0 border-blueText border-t-[1] transition-all duration-200 text-darkBlueText ">
-                                <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                                <AccordionTrigger><p>Como realizo a publicação de uma vaga?</p></AccordionTrigger>
                                 <AccordionContent>
-                                    Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                    dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                    printing
+                                A publicação da vaga só poderá ser realizada no perfil do contratante onde a opção está disponivel. Todas as informações da 
+                                vaga deverão ser obrigatoriamente preenchidas para serem publicadas.
                                 </AccordionContent>
                             </AccordionItem>
 
                             <AccordionItem value="item-3" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                                <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                                <AccordionTrigger><p>Onde posso localizar as informações de contato do contratante?</p></AccordionTrigger>
                                 <AccordionContent>
-                                    Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
-                                    dummy text of the printing. Ipsum is simply is simply dummy text of the
-                                    printing
+                                    Todas as informações relacionadas ao contratante estaram disponíveis no perfil do contratante.
                                 </AccordionContent>
                             </AccordionItem>
 
                             <AccordionItem value="item-4" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                                <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                                <AccordionTrigger><p>?</p></AccordionTrigger>
                                 <AccordionContent className=" text-darkBlueText">
                                     Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
                                     dummy text of the printing. Ipsum is simply is simply dummy text of the
@@ -90,7 +85,7 @@ export function Help() {
                 <div className="mb-20" id="Perfil">
                     <Accordion type="single" collapsible>
                         <AccordionItem value="item-1" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>Lorem Ipsum is simply dummy text of the printing?</p></AccordionTrigger>
+                            <AccordionTrigger><p>?</p></AccordionTrigger>
                             <AccordionContent>
                                 Lorem Ipsum is simply dummy text of the printing lorem Ipsum is simply
                                 dummy text of the printing. Ipsum is simply is simply dummy text of the
@@ -150,7 +145,7 @@ export function Help() {
                                 <textarea name="comentarios" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200" value={question} onChange={(e) => setQuestion(e.target.value)}/>
                             </div>
                             <div className="flex justify-center">
-                            <Button variant="mediumSizeDark" onClick={()=>sendHelp} leftIcon={null} rightIcon={null}>Enviar</Button>
+                            <Button variant="mediumSizeDark" onClick={()=>sendHelp} leftIcon={null} rightIcon={null} >Enviar</Button>
                             </div>
                         </div>
                     </form>
