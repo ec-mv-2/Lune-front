@@ -1,192 +1,201 @@
 import Page from "@/components/Page";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useBackendApi } from "@/hooks/useBackendApi";
+import { AuthContext } from "@/contexts/AuthContext";
 
-// Tipagem das mensagens
 interface Message {
-    text: string;
+  text: string;
 }
 
 interface User {
-    _id: string;
-    userId: string;
-    name: string;
+  _id: string;
+  userId: string;
+  name: string;
 }
 
 export function Chat({ userId }: { userId: string }) {
-    const [messageList, setMessageList] = useState<Message[]>([]);
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [recipientId, setRecipientId] = useState<string | null>(null);
-    const [users, setUsers] = useState<User[]>([]);
-    const messageRef = useRef<HTMLInputElement>(null);
+  const { user } = useContext(AuthContext);
+  const [messageList, setMessageList] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [recipientId, setRecipientId] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const messageRef = useRef<HTMLInputElement>(null);
 
-    const { getUser } = useBackendApi();
+  const { getUser } = useBackendApi();
 
-    // Carregar dados do usuário
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await getUser(userId);
-                console.log("Dados do usuário:", response.user);
-            } catch (error) {
-                console.error("Erro ao buscar o usuário:", error);
-                toast.error("Erro ao carregar dados do usuário.");
-            }
-        };
+  const fetchConversation = async (recipientId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3333/conversations/${userId}/${recipientId}`);
+      const data = await response.json();
+      if (data.messages) {
+        setMessageList(data.messages); 
+      }
+    } catch (error) {
+      console.error("Erro ao buscar a conversa:", error);
+      toast.error("Erro ao carregar o histórico de mensagens.");
+    }
+  };
 
-        if (userId) {
-            fetchUserData();
-        }
-    }, [userId]);
-
-    // Conectar ao Socket e escutar mensagens
-    useEffect(() => {
-        const socketConnection = io("http://localhost:3333");
-
-        setSocket(socketConnection);
-
-        console.log("Conexão estabelecida com o servidor socket:", socketConnection.id);
-
-        // Escutando as mensagens recebidas
-        socketConnection.on("receiveMessage", (data: { from: string, message: string }) => {
-            console.log("Mensagem recebida:", data); // Verificar os dados recebidos
-
-            // Verifica se a mensagem é para o destinatário atual ou para o usuário
-            if (recipientId) {
-                setMessageList((prevMessages) => [
-                    ...prevMessages,
-                    { text: `${data.from}: ${data.message}` },
-                ]);
-            }
-        });
-
-        // Handle de erro de conexão
-        socketConnection.on("connect_error", (err: Error) => {
-            toast.error(`Erro de conexão: ${err.message}`);
-            console.error("Erro de conexão:", err);
-        });
-
-        return () => {
-            socketConnection.off("receiveMessage");
-        };
-    }, [recipientId]); // Adicionado recipientId como dependência para garantir que as mensagens sejam filtradas corretamente
-
-    // Carregar lista de usuários
-    useEffect(() => {
-        async function fetchUsers() {
-            try {
-                const response = await fetch('http://localhost:3333/listUsers');
-                const data = await response.json();
-                console.log("Usuários recebidos:", data);
-                setUsers(data);
-            } catch (error) {
-                console.error("Erro ao buscar usuários:", error);
-                toast.error("Erro ao buscar usuários.");
-            }
-        }
-        fetchUsers();
-    }, []);
-
-    // Autenticar no socket
-    useEffect(() => {
-        if (socket) {
-            socket.emit("authenticate", userId);
-            console.log(`Usuário ${userId} autenticado no servidor socket`);
-        }
-    }, [socket, userId]);
-
-    // Enviar mensagem
-    const handleSubmit = () => {
-        if (!recipientId) {
-            toast.error("Selecione um destinatário antes de enviar.");
-            console.log("Erro: Nenhum destinatário selecionado.");
-            return;
-        }
-
-        if (messageRef.current && socket && recipientId) {
-            const message = messageRef.current.value.trim();
-            if (!message) {
-                toast.error("A mensagem está vazia.");
-                console.log("Erro: A mensagem está vazia.");
-                return;
-            }
-
-            // Enviar mensagem via socket
-            socket.emit("message", {
-                from: userId,
-                to: recipientId,
-                message: message,
-            });
-
-            messageRef.current.value = ''; // Limpa o campo de mensagem
-            toast.success("Mensagem enviada com sucesso!");
-        }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await getUser(userId);
+        console.log("Dados do usuário:", response.user);
+      } catch (error) {
+        console.error("Erro ao buscar o usuário:", error);
+        toast.error("Erro ao carregar dados do usuário.");
+      }
     };
 
-    // Selecionar destinatário
-    const handleSelectRecipient = (userId: string) => {
-        console.log(`Destinatário clicado: ${userId}`);
-        setRecipientId(userId);
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const socketConnection = io("http://localhost:3333");
+    setSocket(socketConnection);
+
+    socketConnection.on("receiveMessage", (data: { from: string; message: string }) => {
+      if (data.from === recipientId) {
+        setMessageList((prevMessages) => [
+          ...prevMessages,
+          { text: `${data.from}: ${data.message}` },
+        ]);
+      }
+    });
+
+    socketConnection.on("connect_error", (err: Error) => {
+      toast.error(`Erro de conexão: ${err.message}`);
+      console.error("Erro de conexão:", err);
+    });
+
+    return () => {
+      socketConnection.off("receiveMessage");
+      socketConnection.disconnect();
     };
+  }, [recipientId]);
 
-    return (
-        <div className="min-h-screen">
-            <Page className="bg-grey">
-                <div className="p-4">
-                    {/* Lista de usuários */}
-                    <div className="mb-4">
-                        <h2>Escolha um destinatário:</h2>
-                        <ul>
-                            {users.map((user) => (
-                                <li key={user._id}>
-                                    <button
-                                        onClick={() => handleSelectRecipient(user._id)}
-                                        className={`text-blue-500 ${recipientId === user._id ? "font-bold" : ""}`}
-                                    >
-                                        {user.name}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const response = await fetch("http://localhost:3333/listUsers");
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Erro ao buscar usuários:", error);
+        toast.error("Erro ao buscar usuários.");
+      }
+    }
+    fetchUsers();
+  }, []);
 
-                    {recipientId && (
-                        <div>
-                            <h3>Enviando para: {users.find((user) => user._id === recipientId)?.name}</h3>
-                        </div>
-                    )}
+  useEffect(() => {
+    if (socket) {
+      socket.emit("authenticate", userId);
+    }
+  }, [socket, userId]);
 
-                    <div>
-                        <input
-                            type="text"
-                            ref={messageRef}
-                            placeholder="Digite sua mensagem"
-                            className="p-2 border rounded"
-                        />
-                        <button
-                            onClick={handleSubmit}
-                            className="ml-2 p-2 bg-darkBlueText text-whiteLight rounded"
-                            disabled={!recipientId}
-                        >
-                            Enviar
-                        </button>
-                    </div>
+  const handleSubmit = () => {
+    if (!recipientId) {
+      toast.error("Selecione um destinatário antes de enviar.");
+      return;
+    }
 
-                    {/* Exibe a lista de mensagens */}
-                    <div className="mt-4">
-                        {messageList.length > 0 ? (
-                            messageList.map((message, index) => (
-                                <p key={index}>{message.text}</p>
-                            ))
-                        ) : (
-                            <p>Não há mensagens.</p>
-                        )}
-                    </div>
-                </div>
-            </Page>
+    if (messageRef.current && socket && recipientId) {
+      const message = messageRef.current.value.trim();
+      if (!message) {
+        toast.error("A mensagem está vazia.");
+        return;
+      }
+
+      socket.emit("message", {
+        from: userId,
+        to: recipientId,
+        message: message,
+      });
+
+      setMessageList((prevMessages) => [
+        ...prevMessages,
+        { text: `${user?.name || "Eu"}: ${message}` },
+      ]);
+
+      messageRef.current.value = "";
+      toast.success("Mensagem enviada com sucesso!");
+    }
+  };
+
+  const handleSelectRecipient = (selectedUserId: string) => {
+    setRecipientId(selectedUserId);
+    setMessageList([]); 
+    fetchConversation(selectedUserId);
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Page className="">
+        <div className="p-4 pt-20 max-w-lg mx-auto">
+          <div className="mb-6">
+            <h2 className="text-xl mb-2">Escolha um destinatário:</h2>
+            <ul className="space-y-2">
+              {users.map((user) => (
+                <li key={user._id}>
+                  <button
+                    onClick={() => handleSelectRecipient(user._id)}
+                    className={`w-full text-left px-4 py-2 rounded-md ${
+                      recipientId === user._id ? "bg-darkBlueText text-white" : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {user.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {recipientId && (
+            <div className="mb-4">
+              <h3 className="text-lg text-darkBlueText">
+                Conversa com {users.find((user) => user._id === recipientId)?.name}
+              </h3>
+            </div>
+          )}
+
+          <div className="flex items-center  mb-4">
+            <input
+              type="text"
+              ref={messageRef}
+              placeholder="Digite sua mensagem"
+              className="flex-1 p-2 rounded-md"
+            />
+            <button
+              onClick={handleSubmit}
+              className="p-2 ml-5  rounded-md bg-darkBlueText px-9 text-white "
+              disabled={!recipientId}
+            >
+              Enviar
+            </button>
+          </div>
+
+          
+          <div className="bg-white p-4 rounded-md shadow">
+            {messageList.length > 0 ? (
+              <div className="space-y-2">
+                {messageList.map((message, index) => (
+                  <p key={index} className="p-2 rounded-md bg-gray-100">
+                    {message.text}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">Não há mensagens.</p>
+            )}
+          </div>
         </div>
-    );
+      </Page>
+    </div>
+  );
 }
