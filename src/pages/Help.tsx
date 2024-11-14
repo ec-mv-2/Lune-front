@@ -9,7 +9,6 @@ import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { FormEvent, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 export function Help() {
     const backEndApi = useBackendApi()
@@ -21,7 +20,6 @@ export function Help() {
         console.log(name)
         if (data){setName("") 
             setQuestion("")
-            toast.success("Dúvida enviada com sucesso!")
         }
     }
         
@@ -110,9 +108,9 @@ export function Help() {
 
 
                         <AccordionItem value="item-4" className="py-0 min-h-0  border-blueText border-t-[1] transition-all duration-200 text-darkBlueText">
-                            <AccordionTrigger><p>Como o formulário funciona?</p></AccordionTrigger>
+                            <AccordionTrigger><p>?</p></AccordionTrigger>
                             <AccordionContent>
-                                O usuário irá escrever sua dúvida e enviar através do formulário, onde a dúvida será encaminhada para nossa equipe que ficará responsável pelo retorno ao usuário.
+                                
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
@@ -139,13 +137,12 @@ export function Help() {
                                 <textarea name="comentarios" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200" value={question} onChange={(e) => setQuestion(e.target.value)}/>
                             </div>
                             <div className="flex justify-center">
-                            <button type="submit"  className="bg-darkBlueText py-3 px-14 mt-2 text-white rounded hover:brightness-75 transition-all duration-200" >Enviar</button>
+                            <Button variant="mediumSizeDark" onClick={()=>sendHelp} leftIcon={null} rightIcon={null} >Enviar</Button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <ToastContainer/>
         </Page>
     )
 }

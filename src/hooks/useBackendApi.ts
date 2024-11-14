@@ -311,6 +311,47 @@ export const useBackendApi = () =>({
   return{
     newQuestion: response.data
   }
+  },
+
+  createChat: async(otherUserId: string)=>{
+    const response = await axios.post(`${URL}/getConversation`, {otherUserId},{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+  })
+  return{
+    newChat: response.data
   }
+  },
+
+  newMessage: async(message:  string, otherUserId: string)=>{
+    const response = await axios.post(`${URL}/newMessage`, {message, otherUserId},{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+  })
+  return{
+    newMessage: response.data
+  }
+  },
+
+  listUsers: async()=>{
+    const response = await axios.get(`${URL}/listUsers`)
+  return{
+    users: response.data
+  }
+  },
+
+  ListMessages: async(otherUserId: string)=>{
+    const response = await axios.post(`${URL}/listMessages`,{otherUserId},{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+    })
+  return{
+    messages: response.data
+  }
+  },
+
 
 })

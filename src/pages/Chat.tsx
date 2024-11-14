@@ -9,263 +9,135 @@ import { AuthContext } from "@/contexts/AuthContext";
 interface Message {
   text: string;
 }
+interface UserProps {
+  _id: string,
+  name: string,
+  email: String,
+  password: String,
+  state: string,
+  cep: string,
+  cpf: string,
+  birthDate: string,
+  skills: [],
+  experience: [],
+  academic: [],
+  bio: string,
+  isContractor: boolean
+}
 
-interface User {
-  _id: string;
-  userId: string;
-  name: string;
+interface chatsProps {
+  messages: [{
+    user: string,
+    message: string
+  }] 
 }
 
 export function Chat() {
-  const { user } = useContext(AuthContext); 
-  const [messageList, setMessageList] = useState<Message[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [recipientId, setRecipientId] = useState<string | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // Novo estado para controlar o carregamento
-  const messageRef = useRef<HTMLInputElement>(null);
+  const backendApi = useBackendApi()
+  const [users, setUsers] = useState<UserProps[]>([])
+  const [messages, setMessages] = useState<chatsProps>()
 
-  const { getUser } = useBackendApi();
-
-  const fetchConversation = async (recipientId: string) => {
-    const userId = user?._id; 
-  
-    if (!userId) {
-      toast.error("Usuário não autenticado.");
-      return null;
-    }
-  
-    try {
-      const response = await fetch(`http://localhost:3333/getConversation/${userId}/${recipientId}`);
-      if (!response.ok) {
-        throw new Error(`Erro ao buscar a conversa: ${response.statusText}. `);
-      }
-  
-      const data = await response.json();
-      if (data.conversationId && data.messages) {
-        setMessageList(data.messages);
-        return data.conversationId;
-      }
-    } catch (error) {
-      console.error("Erro ao buscar a conversa:", error);
-      toast.error("Erro ao carregar o histórico de mensagens.");
-    }
-    return null;
-  };
-
-  useEffect(() => {
-    if (recipientId) {
-      fetchConversation(recipientId);
-    }
-  }, [recipientId]);
-  
-
-  useEffect(() => {
-    if (!user?._id) {
-      toast.error("Usuário não autenticado.");
-      return;
-    }
-    if (!recipientId) {
-      console.log("AQUIIII")
-    } else {
-      console.log('deu pau aq')
-    }
-
-    const fetchUserData = async () => {
-      try {
-        setLoading(true); 
-        const response = await getUser(user._id);
-        console.log("Dados do usuário principal:", response.user);
-      } catch (error) {
-        console.error("Erro ao buscar o usuário:", error);
-        toast.error("Erro ao carregar dados do usuário.");
-      } finally {
-        setLoading(false); 
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
-
-  useEffect(() => {
-    const socketConnection = io("http://localhost:3333");
-    setSocket(socketConnection);
-
-    socketConnection.on("receiveMessage", (data: { from: string; message: string }) => {
-      if (data.from === recipientId) {
-        setMessageList((prevMessages) => [
-          ...prevMessages,
-          { text: `${data.from}: ${data.message}` },
-        ]);
-      }
-    });
-
-    socketConnection.on("connect_error", (err: Error) => {
-      toast.error(`Erro de conexão: ${err.message}`);
-      console.error("Erro de conexão:", err);
-    });
-
-    return () => {
-      socketConnection.off("receiveMessage");
-      socketConnection.disconnect();
-    };
-  }, [recipientId]);
+  const [newMessageText, setNewMessageText] = useState("")
 
 
-  const handleSelectRecipient = (selectedUserId: string) => {
-    if (!selectedUserId) {
-        toast.error("Selecione um destinatário válido.");
-        return;
-    }
+  const [otherId, setOtherId] = useState("")
 
-    if (selectedUserId === user?._id) {
-        toast.error("Você não pode enviar uma mensagem para si mesmo.");
-        return;
-    }
-
-    setRecipientId(selectedUserId);
-    fetchConversation(selectedUserId);
-};
-
-
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const response = await fetch("http://localhost:3333/listUsers");
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Erro ao buscar usuários :", error);
-        toast.error("Erro ao buscar usuários.");
+  useEffect(()=>{
+    async function listUsers(){
+      const data = await backendApi.listUsers()
+      if(data){
+        setUsers(data.users)
       }
     }
-    fetchUsers();
-  }, []);
 
-  useEffect(() => {
-    if (socket && user?._id) {
-      socket.emit("authenticate", user._id);
-    }
-  }, [socket, user]);
+    listUsers()
 
-  const handleSubmit = async () => {
-    if (!recipientId) {
-      toast.error("Selecione um destinatário antes de enviar.");
-      return;
-    }
-
-    if (messageRef.current && socket && recipientId) {
-      const message = messageRef.current.value.trim();
-      if (!message) {
-        toast.error("A mensagem está vazia.");
-        return;
-      }
+    async function listMessages(){
       
-
-      const conversationId = await fetchConversation(recipientId);
-      if (!conversationId) {
-        toast.error("Erro ao obter o ID da conversa."); 
-        return;
-      } 
-
-      if (!user) { 
-        toast.error("Usuário não autenticado.");
-        return;
+      const data = await backendApi.ListMessages(otherId)
+      if(data){
+        setMessages(data.messages)
       }
-      sendMessage(conversationId, user._id, recipientId, message);
-
-      setMessageList((prevMessages) => [
-        ...prevMessages,
-        { text: `${user?.name || "Eu"}: ${message}` },
-      ]);
-
-      messageRef.current.value = "";
-      toast.success("Mensagem enviada com sucesso!");
     }
-  };
 
+    listMessages()
+
+    console.log(messages)
+
+
+
+  }, [users])
+
+  console.log(messages)
+
+
+  async function createChat(){
+    await backendApi.createChat(otherId)
+  }
   
-  const sendMessage = (conversationId: string, from: string, to: string, text: string) => {
-    if (!conversationId || !from || !to || !text) {
-      console.error("Dados incompletos. Todos os campos são necessários.");
-      return;
-    }
 
-    if (socket) {
-      socket.emit("message", {
-        conversationId,
-        from,
-        to,
-        text
-      });
-    } else {
-      console.error("Socket não está conectado.");
-    }
-  };
+  async function newMessage(){
+    await backendApi.newMessage(newMessageText, otherId)
+  }
+  
 
+  const auth = useContext(AuthContext)
   return (
     <div className="min-h-screen">
       <Page className="">
         <div className="p-4 pt-20 max-w-lg mx-auto">
-          <div className="mb-6">
-            <h2 className="text-xl mb-2">Escolha um destinatário:</h2>
-            <ul className="space-y-2">
-              {users.map((user) => (
-                <li key={user._id}>
-                  <button
-                    onClick={() => {
-                      console.log(`Selecionado: ${user._id}`);  
-                      handleSelectRecipient(user._id);
-                      
-                    }}
-                    className={`w-full text-left px-4 py-2 rounded-md ${
-                      recipientId === user._id ? "bg-darkBlueText text-white" : "bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {user.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <h1>Escolha um destinatário:</h1>
+          <div className="flex flex-col gap-2">
 
-          {recipientId && (
-            <div className="mb-4">
-              <h3 className="text-lg text-darkBlueText">
-                Conversa com {users.find((user) => user._id === recipientId)?.name}
-              </h3>
-            </div>
-          )}
+            {users.map(user =>{
+              return(
+                <div className={otherId==user._id? `bg-gray-500 px-3 py-3 rounded cursor-pointer` : `bg-white px-3 py-3 rounded cursor-pointer`} onClick={()=>{
+                  setOtherId(user._id)
+                  }}>
+                  {user.name}
+                </div>
+              )
+            })}
+            {
+              messages?
+                <div className=" flex items-center gap-2  ">
+                  <input value={newMessageText} onChange={(e)=>{setNewMessageText(e.target.value)}} type="text" className="flex-initial w-[400px] py-2 px-3 rounded" placeholder="Digite sua mensagem"/>
+                  <button onClick={()=>newMessage()} className="flex-initial px-3 py-2 rounded bg-darkBlueText text-white">Enviar</button>
+                </div>
 
-          <div className="flex items-center  mb-4">
-            <input
-              type="text"
-              ref={messageRef}
-              placeholder="Digite sua mensagem"
-              className="flex-1 p-2 rounded-md"
-            />
-            <button
-              onClick={handleSubmit}
-              className="p-2 ml-5 rounded-md bg-darkBlueText px-9 text-white"
-              disabled={!recipientId || loading}
-            >
-              {loading ? "Enviando..." : "Enviar"}
-            </button>
-          </div>
+              :
 
-          <div className="bg-white p-4 rounded-md shadow">
-            {messageList.length > 0 ? (
-              <div className="space-y-2">
-                {messageList.map((message, index) => (
-                  <p key={index} className="p-2 rounded-md bg-gray-100">
-                    {message.text}
-                  </p>
-                ))}
+              <div>
+                  <button className="flex-initial px-3 py-2 rounded bg-darkBlueText text-white w-full disabled:bg-slate-500" onClick={()=>createChat()}>Criar chat</button>
+
               </div>
-            ) : (
-              <p>Sem mensagens ainda.</p>
-            )}
+            }
+            
           </div>
+
+
+          <div className="bg-white min-h-10 mt-24 rounded p-2 flex flex-col gap-5">
+            {messages?
+                messages.messages.map(message =>{
+                  if(message.user == auth.user?._id){
+                    return(
+                      <p className="text-right">{message.message}</p>
+
+                    )
+                  }else{
+                    return(
+                      <p>{message.message}</p>
+                    )
+                  }
+                  
+                })
+
+              :null
+            }
+          </div>
+
+          
+
         </div>
       </Page>
     </div>
