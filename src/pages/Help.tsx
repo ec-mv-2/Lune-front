@@ -9,6 +9,7 @@ import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/Input";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { FormEvent, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 export function Help() {
     const backEndApi = useBackendApi()
@@ -20,7 +21,7 @@ export function Help() {
         console.log(name)
         if (data){setName("") 
             setQuestion("")
-            alert ("Dúvida enviada com sucesso!")
+            toast.success("Dúvida enviada com sucesso!")
         }
     }
         
@@ -144,6 +145,7 @@ export function Help() {
                     </form>
                 </div>
             </div>
+            <ToastContainer/>
         </Page>
     )
 }
