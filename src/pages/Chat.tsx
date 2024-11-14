@@ -16,44 +16,76 @@ interface User {
   name: string;
 }
 
-export function Chat({ userId }: { userId: string }) {
-  const { user } = useContext(AuthContext);
+export function Chat() {
+  const { user } = useContext(AuthContext); 
   const [messageList, setMessageList] = useState<Message[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [recipientId, setRecipientId] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // Novo estado para controlar o carregamento
   const messageRef = useRef<HTMLInputElement>(null);
 
   const { getUser } = useBackendApi();
 
   const fetchConversation = async (recipientId: string) => {
+    const userId = user?._id; 
+  
+    if (!userId) {
+      toast.error("Usuário não autenticado.");
+      return null;
+    }
+  
     try {
-      const response = await fetch(`http://localhost:3333/conversations/${userId}/${recipientId}`);
+      const response = await fetch(`http://localhost:3333/getConversation/${userId}/${recipientId}`);
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar a conversa: ${response.statusText}. `);
+      }
+  
       const data = await response.json();
-      if (data.messages) {
-        setMessageList(data.messages); 
+      if (data.conversationId && data.messages) {
+        setMessageList(data.messages);
+        return data.conversationId;
       }
     } catch (error) {
       console.error("Erro ao buscar a conversa:", error);
       toast.error("Erro ao carregar o histórico de mensagens.");
     }
+    return null;
   };
 
   useEffect(() => {
+    if (recipientId) {
+      fetchConversation(recipientId);
+    }
+  }, [recipientId]);
+  
+
+  useEffect(() => {
+    if (!user?._id) {
+      toast.error("Usuário não autenticado.");
+      return;
+    }
+    if (!recipientId) {
+      console.log("AQUIIII")
+    } else {
+      console.log('deu pau aq')
+    }
+
     const fetchUserData = async () => {
       try {
-        const response = await getUser(userId);
-        console.log("Dados do usuário:", response.user);
+        setLoading(true); 
+        const response = await getUser(user._id);
+        console.log("Dados do usuário principal:", response.user);
       } catch (error) {
         console.error("Erro ao buscar o usuário:", error);
         toast.error("Erro ao carregar dados do usuário.");
+      } finally {
+        setLoading(false); 
       }
     };
 
-    if (userId) {
-      fetchUserData();
-    }
-  }, [userId]);
+    fetchUserData();
+  }, [user]);
 
   useEffect(() => {
     const socketConnection = io("http://localhost:3333");
@@ -79,6 +111,23 @@ export function Chat({ userId }: { userId: string }) {
     };
   }, [recipientId]);
 
+
+  const handleSelectRecipient = (selectedUserId: string) => {
+    if (!selectedUserId) {
+        toast.error("Selecione um destinatário válido.");
+        return;
+    }
+
+    if (selectedUserId === user?._id) {
+        toast.error("Você não pode enviar uma mensagem para si mesmo.");
+        return;
+    }
+
+    setRecipientId(selectedUserId);
+    fetchConversation(selectedUserId);
+};
+
+
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -86,7 +135,7 @@ export function Chat({ userId }: { userId: string }) {
         const data = await response.json();
         setUsers(data);
       } catch (error) {
-        console.error("Erro ao buscar usuários:", error);
+        console.error("Erro ao buscar usuários :", error);
         toast.error("Erro ao buscar usuários.");
       }
     }
@@ -94,12 +143,12 @@ export function Chat({ userId }: { userId: string }) {
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      socket.emit("authenticate", userId);
+    if (socket && user?._id) {
+      socket.emit("authenticate", user._id);
     }
-  }, [socket, userId]);
+  }, [socket, user]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!recipientId) {
       toast.error("Selecione um destinatário antes de enviar.");
       return;
@@ -111,12 +160,19 @@ export function Chat({ userId }: { userId: string }) {
         toast.error("A mensagem está vazia.");
         return;
       }
+      
 
-      socket.emit("message", {
-        from: userId,
-        to: recipientId,
-        message: message,
-      });
+      const conversationId = await fetchConversation(recipientId);
+      if (!conversationId) {
+        toast.error("Erro ao obter o ID da conversa."); 
+        return;
+      } 
+
+      if (!user) { 
+        toast.error("Usuário não autenticado.");
+        return;
+      }
+      sendMessage(conversationId, user._id, recipientId, message);
 
       setMessageList((prevMessages) => [
         ...prevMessages,
@@ -128,10 +184,23 @@ export function Chat({ userId }: { userId: string }) {
     }
   };
 
-  const handleSelectRecipient = (selectedUserId: string) => {
-    setRecipientId(selectedUserId);
-    setMessageList([]); 
-    fetchConversation(selectedUserId);
+  
+  const sendMessage = (conversationId: string, from: string, to: string, text: string) => {
+    if (!conversationId || !from || !to || !text) {
+      console.error("Dados incompletos. Todos os campos são necessários.");
+      return;
+    }
+
+    if (socket) {
+      socket.emit("message", {
+        conversationId,
+        from,
+        to,
+        text
+      });
+    } else {
+      console.error("Socket não está conectado.");
+    }
   };
 
   return (
@@ -144,7 +213,11 @@ export function Chat({ userId }: { userId: string }) {
               {users.map((user) => (
                 <li key={user._id}>
                   <button
-                    onClick={() => handleSelectRecipient(user._id)}
+                    onClick={() => {
+                      console.log(`Selecionado: ${user._id}`);  
+                      handleSelectRecipient(user._id);
+                      
+                    }}
                     className={`w-full text-left px-4 py-2 rounded-md ${
                       recipientId === user._id ? "bg-darkBlueText text-white" : "bg-gray-200 text-gray-700"
                     }`}
@@ -173,14 +246,13 @@ export function Chat({ userId }: { userId: string }) {
             />
             <button
               onClick={handleSubmit}
-              className="p-2 ml-5  rounded-md bg-darkBlueText px-9 text-white "
-              disabled={!recipientId}
+              className="p-2 ml-5 rounded-md bg-darkBlueText px-9 text-white"
+              disabled={!recipientId || loading}
             >
-              Enviar
+              {loading ? "Enviando..." : "Enviar"}
             </button>
           </div>
 
-          
           <div className="bg-white p-4 rounded-md shadow">
             {messageList.length > 0 ? (
               <div className="space-y-2">
@@ -191,7 +263,7 @@ export function Chat({ userId }: { userId: string }) {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">Não há mensagens.</p>
+              <p>Sem mensagens ainda.</p>
             )}
           </div>
         </div>
@@ -199,3 +271,5 @@ export function Chat({ userId }: { userId: string }) {
     </div>
   );
 }
+
+export default Chat;
