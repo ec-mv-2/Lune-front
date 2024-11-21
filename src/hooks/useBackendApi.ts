@@ -349,7 +349,8 @@ export const useBackendApi = () =>({
       }
     })
   return{
-    messages: response.data
+    messages: response.data.chat,
+    otherUser: response.data.user
   }
   },
 

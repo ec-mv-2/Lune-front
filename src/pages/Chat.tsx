@@ -56,10 +56,8 @@ export function Chat() {
       async function listMessages() {
         const data = await backendApi.ListMessages(otherId);
         if (data) {
-          setMessages(data.messages.map((msg: any) => ({
-            ...msg,
-            name: users.find((user) => user._id === msg.user)?.name || "Desconhecido",
-          })));
+          setMessages(data.messages.messages)
+          console.log(data.otherUser)
         }
       }
       listMessages();
@@ -86,6 +84,12 @@ export function Chat() {
     setNewMessageText("");
 
     await backendApi.newMessage(newMessageText, otherId);
+  }
+
+
+  async function createChat(){
+    await backendApi.createChat(otherId)
+
   }
 
   return (
@@ -143,6 +147,7 @@ export function Chat() {
               </div>
             ))}
           </div>
+          <button onClick={()=>createChat()}>Teste</button>
         </div>
       </Page>
     </div>
