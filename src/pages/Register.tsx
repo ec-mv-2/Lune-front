@@ -12,6 +12,7 @@ import logo from '../assets/Logo.png'
 import { AuthContext } from "@/contexts/AuthContext";
 
 import { format } from 'date-fns';
+import { toast, ToastContainer } from "react-toastify";
 export function Register(){
     const cepApi = useCepApi()
     const navigate = useNavigate()
@@ -160,6 +161,7 @@ export function Register(){
           setEmailCode(templateParams.code);
         } catch (error) {
           console.log(error)
+          toast.error('Não foi possível enviar o código por email. Tente novamente.')
         }
     };
 
@@ -183,8 +185,12 @@ export function Register(){
         const data = await backendApi.createUser(name, email, password, cpf, cep, dateFormated, state, contractorBool)
         if(data){
             console.log(data.user)
-            auth.signin(email, password)
-        }
+            auth.signin(email, password) 
+            
+        } else {
+
+            toast.error ('Por favor, verifique se todos os campos estão preenchidos corretamente.')
+        } 
     }
 
     if (auth.user) {
@@ -200,7 +206,7 @@ export function Register(){
             </div>
             <div className="flex flex-wrap gap-10 lg:gap-0  max-w-[1350px] w-full h-4/6 my-auto">
                 <div className="flex justify-center items-center flex-auto w-32 ">
-                    <div className="bg-[#dfdfdf] h-28 lg:h-96 p-10 flex items-center rounded-xl min-w-96">~
+                    <div className="bg-[#dfdfdf] h-28 lg:h-96 p-10 flex items-center rounded-xl min-w-96">
                         {isContractor == "false"?
                         <ul className="text-2xl flex flex-row lg:flex-col gap-5">
                             <li className="flex gap-3 flex-col lg:flex-row text-sm lg:text-2xl items-center "><p className={phase==1?"bg-[#939ebf] p-1 rounded-md w-8 h-8" : "bg-[#bfbfbf] p-1 rounded-md w-8 h-8"}><BsPerson className="text-2xl"/></p> {phase >1?<p className="text-[#bfbfbf] text-center"><s>Dados pessoais</s></p>: <p className="text-center">Dados pessoais</p> }</li>
@@ -290,6 +296,7 @@ export function Register(){
                     </div>
                 </div>
             </div>
+            <ToastContainer/>
         </div>
     )
 }
