@@ -40,8 +40,9 @@ export const useBackendApi = () =>({
     cep: string,
     birthDate: string,
     state: string,
-    isContractor:boolean) =>{
-    const response = await axios.post(`${URL}/createUser`, {name, email, password, cpf, cep, birthDate, state, isContractor})
+    isContractor:boolean, 
+    isADM: boolean) =>{
+    const response = await axios.post(`${URL}/createUser`, {name, email, password, cpf, cep, birthDate, state, isContractor, isADM})
 
     return{
       user: response.data
@@ -271,6 +272,17 @@ export const useBackendApi = () =>({
     }
   },
 
+  listContractors: async()=>{
+    const response = await axios.get(`${URL}/ListContractors`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      constractors: response.data
+    }
+  },
+
 
   listPositionByUser: async()=>{
     const response = await axios.get(`${URL}/listPositionByUser`, {
@@ -311,6 +323,13 @@ export const useBackendApi = () =>({
   return{
     newQuestion: response.data
   }
+  },
+
+  listHelp: async()=>{
+    const response = await axios.get(`${URL}/ListHelp`)
+    return {
+      help: response.data
+    }
   },
 
   createChat: async(otherUserId: string)=>{
@@ -354,5 +373,16 @@ export const useBackendApi = () =>({
   }
   },
 
+  banUser: async(userId: string)=>{
+    const response = await axios.delete(`${URL}/BanUser/${userId}`,{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+    })
+  return{
+    user: response.data
+    
+  }
+  },
 
 })

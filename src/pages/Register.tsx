@@ -182,7 +182,7 @@ export function Register(){
 
     async function createUser() {
         const dateFormated = format(birthDate, 'MM/dd/yyyy')
-        const data = await backendApi.createUser(name, email, password, cpf, cep, dateFormated, state, contractorBool)
+        const data = await backendApi.createUser(name, email, password, cpf, cep, dateFormated, state, contractorBool, false)
         if(data){
             console.log(data.user)
             auth.signin(email, password) 

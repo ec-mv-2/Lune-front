@@ -6,7 +6,7 @@ import { TfiPlus } from "react-icons/tfi";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useBackendApi } from "@/hooks/useBackendApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
@@ -47,7 +47,9 @@ interface UserProps {
     experience: [],
     academic: [],
     bio: string,
-    isContractor: boolean
+    isContractor: boolean,
+    isADM: boolean
+
 }
 
 interface PositionsProps{
@@ -65,11 +67,11 @@ interface PositionsProps{
     experience: number,
     isPrivate: boolean,
     candidates: [],
-    contractorId: string
+    contractorId: string,
 }
 
 
-const wait = () => new Promise((resolve) => setTimeout(resolve, 15));
+const wait = () => new Promise((resolve) => setTimeout(resolve, 1500));
 
 export function Profile () {
     const auth = useContext(AuthContext)
@@ -84,32 +86,24 @@ export function Profile () {
 
     const [myPositions, setMyPositions] = useState<PositionsProps[]>([])
     const [reload, setReload] = useState(false)
-
+    const navigate = useNavigate()
     useEffect(()=>{
-        
-        function calcAge(){
-            if(!user){
-                return 
-            }
-            var dob = new Date(user.birthDate);
-            var month_diff = Date.now() - dob.getTime();  
-            var age_dt = new Date(month_diff);   
-            var year = age_dt.getUTCFullYear();  
-            var age = Math.abs(year - 1970);
-            setAge(age)
-        }
-        calcAge()
-
         async function getUser(){
             if(id){
                 const data = await backendApi.getUser(id)
                 if(data){
                     setUser(data.user)
+
+                    var dob = new Date(data.user.birthDate);
+                    var month_diff = Date.now() - dob.getTime();  
+                    var age_dt = new Date(month_diff);   
+                    var year = age_dt.getUTCFullYear();  
+                    var ageCalc = Math.abs(year - 1970);
+                    setAge(ageCalc)
                 }
             }
         }
         getUser()
-
 
         async function listMyPositions(){
             const data = await backendApi.listPositionByUser()
@@ -125,6 +119,9 @@ export function Profile () {
         setReload(!reload)
     }
 
+    if(!user){
+        navigate("/Homepage")
+    } 
 
     async function addSkill(e: FormEvent){
         e.preventDefault();
@@ -203,6 +200,14 @@ export function Profile () {
         funcreload()
     }
 
+    async function banUser(){
+        if(user){
+            await backendApi.banUser(user._id)
+            navigate("/Homepage")
+
+        }
+    }
+
     return(
         <Page className="">
             <div className="min-h-screen bg-grey">
@@ -213,30 +218,61 @@ export function Profile () {
                         <div className="text-darkBlueText flex flex-col gap-1 mt-1">
                             <div className="text-4xl flex justify-between">
                                 <h1>{user?.name}</h1>
+
+                                {user?._id == auth.user?._id?
+                                    <Dialog onOpenChange={setOpenDialogUser} open={openDialogUser}>
+                                        <DialogTrigger>
+                                            <span><BsPencil className="h-6"/></span>
+                                        </DialogTrigger>
+                                        <DialogContent className="bg-whiteLight">
+                                            <DialogHeader>
+                                            <DialogTitle className="text-darkBlueText">Editar perfil</DialogTitle>
+                                            </DialogHeader>
+                                            <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={updateUser}>
+                                                <Input name="name" title="NOME" defaultValue={user?.name}/>
+                                                <div>
+                                                    <p className="text-darkBlueText max-w-20 relative top-2 left-3 px-2 bg-whiteLight text-sm">Biografia</p>
+                                                    <textarea name="bio" defaultValue={user?.bio} className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
+                                                </div>
+                                                <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                            </form>
+                                        </DialogContent>
+                                    </Dialog>
+                                :null
+                                }
+
+                                {auth.user?.isADM?
+                                    <Dialog >
+                                        <DialogTrigger>
+                                        <button className="text-base border border-blueText px-4 rounded hover:border-red-800 hover:text-red-800 transition-all duration-200">Banir</button>
+
+                                        </DialogTrigger>
+                                        <DialogContent className="bg-whiteLight">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-darkBlueText">Banir usuário</DialogTitle>
+                                                
+                                            </DialogHeader>
+                                            <p className="text-gray-500">Atenão! Após esta ação o usuário será banido PERMANENTEMENTE! Está ação não poderá ser desfeita.</p>
+
+                                            <DialogClose>
+                                                <button className="w-full border border-red-800 py-2 rounded text-red-800 hover:bg-red-800 hover:text-white transition-all duration-200" onClick={()=>banUser()}>Banir usuário</button>
+                                            </DialogClose>
+                                        </DialogContent>
+                                    </Dialog>
+                                :null
+                                }
                                 
-                                <Dialog onOpenChange={setOpenDialogUser} open={openDialogUser}>
-                                    <DialogTrigger>
-                                        <span><BsPencil className="h-6"/></span>
-                                    </DialogTrigger>
-                                    <DialogContent className="bg-whiteLight">
-                                        <DialogHeader>
-                                        <DialogTitle className="text-darkBlueText">Editar perfil</DialogTitle>
-                                        </DialogHeader>
-                                        <form className="flex flex-col gap-5 text-darkBlueText text-sm" onSubmit={updateUser}>
-                                            <Input name="name" title="NOME" defaultValue={user?.name}/>
-                                            <div>
-                                                <p className="text-darkBlueText max-w-20 relative top-2 left-3 px-2 bg-whiteLight text-sm">Biografia</p>
-                                                <textarea name="bio" defaultValue={user?.bio} className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
-                                            </div>
-                                            <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
-                                        </form>
-                                    </DialogContent>
-                                </Dialog>
+                                
                             </div>
-                            {user?.isContractor?
-                                <p className="text-blueText"><i>contratante</i></p>
+
+                            {user?.isADM?
+                                <p className="text-blueText"><i>admin</i></p>
+
+                            :
+                                user?.isContractor?
+                                    <p className="text-blueText"><i>contratante</i></p>
                                 :
-                                <p className="text-blueText"><i>freelancer</i></p>
+                                    <p className="text-blueText"><i>freelancer</i></p>
                             }
 
                             {user?.isContractor?

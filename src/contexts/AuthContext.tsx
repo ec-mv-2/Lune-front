@@ -20,7 +20,8 @@ interface UserProps {
   experience: [],
   academic: [],
   bio: string,
-  isContractor: boolean
+  isContractor: boolean,
+  isADM: boolean
 }
 
 export const AuthContext = createContext<AuthContextProps>(null!);

@@ -180,7 +180,7 @@ export function Header() {
                   </div>
                   <button onClick={() => {
                     auth.signout();
-                    navigate("/");
+                    navigate("/Login");
                   }} className='uppercase bg-darkBlueText mt-5 px-9 py-2 rounded-md text-white'> Sair </button>
                   <p className='text-center pt-3 pb-2 text-mainBeige cursor-pointer'>
                     Continuar
