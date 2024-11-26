@@ -22,10 +22,16 @@ export function Chat() {
   const backendApi = useBackendApi();
   const auth = useContext(AuthContext);
 
+  const [reseter, setReseter] = useState(Number)
   const [users, setUsers] = useState<UserProps[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessageText, setNewMessageText] = useState("");
   const [otherId, setOtherId] = useState("");
+
+
+  // Quebre em caso de desespero
+  setTimeout(() => { setReseter(reseter + 1)}, 1000);
+
 
   useEffect(() => {
     // Listar usuários
@@ -48,13 +54,18 @@ export function Chat() {
   }, []);
 
   // Entrar em uma sala de chat
+
   useEffect(() => {
     if (otherId) {
       socket.emit("joinChat", { chatId: `${auth.user?._id}-${otherId}` });
 
       // Carregar mensagens do backend
       async function listMessages() {
+
+      
+        console.log(otherId)
         const data = await backendApi.ListMessages(otherId);
+       
         if (data) {
           setMessages(data.messages.messages)
           console.log(data.otherUser)
@@ -62,12 +73,13 @@ export function Chat() {
       }
       listMessages();
     }
-  }, [otherId, users]);
+  }, [otherId, users, reseter]);
 
   // Enviar uma nova mensagem
   async function newMessage() {
+   
     if (newMessageText.trim() === "") return;
-
+    
     const message = {
       user: auth.user?._id,
       name: auth.user?.name || "Você",
@@ -82,7 +94,8 @@ export function Chat() {
 
     setMessages((prevMessages) => [...prevMessages, message]);
     setNewMessageText("");
-
+   
+ 
     await backendApi.newMessage(newMessageText, otherId);
   }
 

@@ -362,11 +362,14 @@ export const useBackendApi = () =>({
   },
 
   ListMessages: async(otherUserId: string)=>{
+    
     const response = await axios.post(`${URL}/listMessages`,{otherUserId},{
+     
       headers:{
         Authorization: `Bearer ${storageData}`,
       }
     })
+    
   return{
     messages: response.data.chat,
     otherUser: response.data.user
