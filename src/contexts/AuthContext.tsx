@@ -21,7 +21,8 @@ interface UserProps {
   academic: [],
   bio: string,
   isContractor: boolean,
-  isADM: boolean
+  isADM: boolean,
+  createdAt: Date
 }
 
 export const AuthContext = createContext<AuthContextProps>(null!);
