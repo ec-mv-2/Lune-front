@@ -38,8 +38,8 @@ export function Header() {
     <div>
       <div className="bg-whiteLight fixed w-full z-10 ">
         <div className="pb-1">
-          <div className="flex items-center lg:justify-between px-6 h-40 lg:h-28 ">
-            <button
+        <div className="flex items-center  px-6 h-40 lg:h-28">
+        <button
               className='text-darkBlueText hover:text-mainBeige focus:outline-none mt-3'
               onClick={() => setSidebarIsOpen(true)}
             >
@@ -332,7 +332,7 @@ export function Header() {
           </div>
             <p className='hidden'>Search Bar</p>
           </div>
-        </div>
+        </div> 
       </div>
     </div>
   );

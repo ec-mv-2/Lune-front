@@ -388,4 +388,32 @@ export const useBackendApi = () =>({
   }
   },
 
+  createNotification: async (message: string, receiverIds: string[]) => {
+    const response = await axios.post(
+      `${URL}/createNotification`,
+      { message, receiverIds },
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+    return {
+      notification: response.data,
+    };
+  },
+  
+  getNotifications: async (userId: string) => {
+    const response = await axios.get(`${URL}/getNotifications/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    });
+  
+    return {
+      notifications: response.data,
+    };
+  },
+  
+
 })

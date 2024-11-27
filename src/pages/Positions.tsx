@@ -94,27 +94,29 @@ export function Positions() {
   
   
 
-    <Page className="flex justify-center">
-      <div className="flex gap-12">
-        <div className="mt-20 flex flex-col gap-2 pt-10 ">
-          <button className="border border-lightBlueText rounded-md shadow-sm py-2 px-3">Tecnologia</button>
-          <button className="border border-lightBlueText rounded-md shadow-sm py-2 px-3">Panfletagem</button>
-          <button className="border border-lightBlueText rounded-md shadow-sm py-2 px-3">Limpeza doméstica</button>
-          <button className="border border-lightBlueText rounded-md shadow-sm py-2 px-3">Outros</button>
+    <Page className="flex justify-around">
+      <div className="flex gap-20">
+        <div className="mt-20 flex flex-col gap-3 pt-10 ">
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Tecnologia</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Panfletagem</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Limpeza doméstica</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Outros</button>
         </div>
 
-        <div className="flex flex-col gap-2 ">
-          <p className="mt-20 text-lg text-darkBlueText">Buscar vagas de:</p>
+        <div className="flex  flex-col gap-3 ">
+          <div className="">
+          <p className="mt-24 text-xl text-darkBlueText">Buscar vagas de:</p>
           <div className="flex items-center gap-2">
-            <input type="text" placeholder="Desenvolvedor" className="border border-lightBlueText rounded-md p-1" />
-            <p className="text-2xl text-darkBlueText"><BiSliderAlt /></p>
+            <input type="text" placeholder="Desenvolvedor" className="border border-lightBlueText rounded-md py-1 px-2 my-3 min-w-96 max-w-min" />
+            <div className=""></div>
+            <p className="text-2xl text-darkBlueText ml-6 "><BiSliderAlt /></p>
           </div>
-          <div className="flex items-center ">
+          <div className="flex items-center">
             <Dropdown onChange={setOrder} />
-            <p className="ml-[15.5rem] text-xs"><CiBookmark /></p>
-            <p className="text-xs">Vagas Salvas</p>
+            <p className="ml-[15.5rem] text-xs hidden"><CiBookmark /></p>
+            <p className="text-xs hidden">Vagas Salvas</p>
           </div>
-
+          </div>
 
         {
           auth.user?.isContractor? 
