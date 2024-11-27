@@ -254,6 +254,7 @@ export function HomePage() {
                                 <p className="text-2xl lg:text-lg text-gray-500 text-center my-5">
                                     Você ainda não possui vagas recomendadas. Atualize as informações de seu perfil para receber recomendações ou confira a página de vagas.
                                 </p>
+                                <p>exemplo {new Date(auth.user?.createdAt).getFullYear() }</p>
                                 <Pagination
                                     totalPages={Math.ceil(positions.length / itemsPerPage)}
                                     currentPage={currentPage}
