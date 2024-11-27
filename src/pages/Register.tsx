@@ -194,7 +194,7 @@ export function Register(){
     }
 
     if (auth.user) {
-        navigate("/");
+        navigate("/Login");
     }
 
 

@@ -195,7 +195,7 @@ export function Profile () {
         const formData = new FormData(e.target as HTMLFormElement);
         const data = Object.fromEntries(formData);
 
-        await backendApi.updateUser(data.name as string, data.bio as string)
+        await backendApi.updateUser(data.name as string, data.bio as string, "", "", "", "", "")
         wait().then(() => setOpenDialogUser(false));
         funcreload()
     }

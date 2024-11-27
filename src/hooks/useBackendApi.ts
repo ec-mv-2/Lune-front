@@ -134,8 +134,8 @@ export const useBackendApi = () =>({
     }
   },
 
-  updateUser: async(name: string, bio: string)=>{
-    const response = await axios.put(`${URL}/UpdateUser`, {name, bio},{
+  updateUser: async(name: string, bio: string, email: string, password: string, cep: string, state: string, birthDate: string)=>{
+    const response = await axios.put(`${URL}/UpdateUser`, {name, bio, email, password, cep, state, birthDate},{
       headers: {
         Authorization: `Bearer ${storageData}`,
       },
@@ -387,5 +387,44 @@ export const useBackendApi = () =>({
     
   }
   },
+
+  createNotification: async (message: string, receiverIds: string[]) => {
+    const response = await axios.post(
+      `${URL}/createNotification`,
+      { message, receiverIds },
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+    return {
+      notification: response.data,
+    };
+  },
+  
+  getNotifications: async (userId: string) => {
+    const response = await axios.get(`${URL}/getNotifications/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    });
+  
+    return {
+      notifications: response.data,
+    };
+  },
+
+  deleteUser: async()=> {
+    const response = await axios.delete(`${URL}/DeleteUser`,{
+      headers:{
+        Authorization: `Bearer ${storageData}`
+      }
+    });
+    return{
+      user:response.data
+    }
+  }
+  
 
 })
