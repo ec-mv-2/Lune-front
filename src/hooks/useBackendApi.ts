@@ -424,7 +424,19 @@ export const useBackendApi = () =>({
     return{
       user:response.data
     }
+  },
+
+   banJob: async(jobId: string)=>{
+    const response = await axios.delete(`${URL}/BanJob/${jobId}`,{
+      headers:{
+        Authorization: `Bearer ${storageData}`,
+      }
+    })
+  return{
+    job: response.data
+    
   }
+  },
   
 
 })

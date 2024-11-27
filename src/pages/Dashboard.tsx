@@ -360,9 +360,10 @@ export function Dashboard(){
                                             {jobs.map(job=>{
                                                 return(
                                                     <div className="flex gap-3 items-center bg-white px-3 py-2 rounded">
-                                                        <img className="h-10 rounded-full" src={img} alt="" />
                                                         <div>
                                                             <p>{job.title}</p>
+                                                            <p>Empresa: {job.enterprise}</p>
+
                                                             <p className="text-gray-500">Denúncias: 0</p>
                                                         </div>
                                                     </div>
