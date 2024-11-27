@@ -2,7 +2,7 @@ import Page from "@/components/Page";
 import { useState, useEffect } from "react";
 import { useBackendApi } from "../hooks/useBackendApi";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Adicione a importação do CSS do toast
+import "react-toastify/dist/ReactToastify.css"; 
 
 interface User {
   _id: string;
@@ -52,7 +52,6 @@ export function Notifications() {
         ? prev.filter((id) => id !== userId)
         : [...prev, userId];
 
-      // Limpa a mensagem ao selecionar um usuário
       if (!prev.includes(userId)) {
         setMessage("");
       }
