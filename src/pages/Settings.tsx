@@ -12,6 +12,7 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import { format } from 'date-fns';
+import { useNavigate } from "react-router-dom";
 export function Settings() {
     const auth = useContext(AuthContext)
 
@@ -21,17 +22,25 @@ export function Settings() {
     const [state, setState] = useState("")
     const [birthDate, setBirthDate] = useState("")
     const backendApi = useBackendApi()
-
+    const navigate = useNavigate()
     async function updateInfoUser() {
         const dateFormated = format(birthDate, 'MM/dd/yyyy')
         await backendApi.updateUser("", "", email, password, cep, state, dateFormated)
+    }
+
+    async function deleteUser(){
+        try{
+        await backendApi.deleteUser()
+        auth.signout()
+        navigate("/")
+    }catch (error){console.log(error)}
     }
     return (
         <Page className="">
             <div className="max-w-[800px] mx-auto items-center my-10 flex">
 
 
-                <div className="  flex flex-col ">
+                <div className="  flex flex-col">
                     <div className="pl-16">
 
                         <div className="text-2xl text-darkBlueText " id="Help-text">
@@ -107,25 +116,42 @@ export function Settings() {
                         </Dialog>
 
                     </div>
-                    <div className="  flex flex-col ">
+                    <div className=" flex flex-col mt-5">
 
-                    <div className="text-2xl text-darkBlueText " id="Help-text">
-                            <p>Delete sua conta</p>
+                        <div className="pl-16">
+                            <div className="text-2xl text-darkBlueText " id="Help-text">
+                                <p>Delete sua conta</p>
+                            </div>
+                            <p className="text-blueText my-[6px]">Deletando sua conta você perderá o acesso total, sendo necessário a criação de uma nova conta!</p>
+
                         </div>
-                        <p className="text-blueText my-[6px]">Deletando sua conta você perderá o acesso total sendo necessário a criação de uma nova conta!</p>
-            
-                        </div>
-                    
-                    <button type="submit" className="bg-darkBlueText rounded mt-5 px-10 py-3 text-whiteLight hover:brightness-75 transition-all duration-200" >Confirmar</button>
-                                     
-                            
+                    </div>
 
-                </div>
-                <div>
+                    <Dialog>
 
+                        <DialogTrigger>
+                            <div className="flex justify-center">
+                                <button type="submit" className="bg-red-700 rounded mt-5 px-10 py-3 b text-whiteLight hover:brightness-75 transition-all duration-200" >Deletar conta</button>
+                            </div>
+                        </DialogTrigger>
 
+                        <DialogContent className="bg-whiteLight max-w-xl min-w-46">
+                            <DialogHeader>
+                                <DialogTitle className="text-darkBlueText">Deletar conta</DialogTitle>
+                            </DialogHeader>
+                            <div>
+                                <p className="text-blueText">Ao clicar no botão abaixo sua conta será excluida permanentemente!</p>
+                                <p className="text-blueText pt-3 pb-2"> Deseja continuar?</p>
 
+                                <div className="flex justify-center">
+                                    <DialogClose>
+                                        <button type="submit" className="bg-red-700 rounded mt-1 px-10 py-2 text-whiteLight hover:brightness-75 transition-all duration-200" onClick={() => deleteUser()}>Confirmar</button>
+                                    </DialogClose>
+                                </div>
 
+                            </div>
+                        </DialogContent>
+                    </Dialog>
 
                 </div>
 
