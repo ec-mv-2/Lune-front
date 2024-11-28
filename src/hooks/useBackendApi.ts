@@ -444,5 +444,21 @@ export const useBackendApi = () =>({
   }
   },
   
+  createCoverLetter: async (title: string, content: string) => {
+    const response = await axios.post(
+      `${URL}/createCoverLetter`, 
+      { title, content },
+      {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      }
+    );
+    return {
+      coverLetter: response.data,
+    };
+  },
+  
+
 
 })
