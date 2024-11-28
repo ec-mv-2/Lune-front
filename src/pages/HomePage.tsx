@@ -19,6 +19,15 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
 
 import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+
+
+
+import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -57,19 +66,20 @@ export function HomePage() {
     const [cep, setCep] = useState("");
     const [remuneracao, setRemuneracao] = useState("");
     
-    const [id, setId] = useState('');
+    // const [id, setId] = useState('');
     const [newTitle, setNewTitle] = useState('');
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [skills, setSkills] = useState<string[]>([]);
     const [education, setEducation] = useState('Ensino médio');
-    const [jobModel, setJobModel] = useState('');
+    // const [jobModel, setJobModel] = useState('');
     const [location, setLocation] = useState('');
     const [startDate, setStartDate] = useState<string | undefined>(undefined);
     const [endDate, setEndDate] = useState<string | undefined>(undefined);
     const [experience, setExperience] = useState(Number);
     const [isPrivate, setIsPrivate] = useState(false);
 
+    
     useEffect(() => {
         const token = localStorage.getItem("authToken");
         if (token) {
@@ -96,6 +106,11 @@ export function HomePage() {
     //     fetchpositions();
     // }, [api]);
 
+    useEffect(() => {
+        if (auth.user?.isADM) {
+            navigate("/Dashboard");
+        }
+    }, [auth.user, navigate]);
     
     function getAddress(cep: string) {
         if (cep.length === 8) {
@@ -219,6 +234,8 @@ export function HomePage() {
                 <div className=" lg:flex justify-items-center lg:justify-between lg:items-start mx-32 lg:mx-48 my-24 lg:space-x-8 pt-14 lg:pt-0">
                     <div className="lg:w-1/4">
                         <div className="flex flex-col items-center lg:justify-center">
+
+                       
                             <p className="text-5xl text-center lg:text-xl text-darkBlueText">
                                 Boas vindas, <span className="text-mainBeige"> {userType === 'contractor' ? 'contratante' : 'freelancer'}!</span>
                             </p>
@@ -236,12 +253,77 @@ export function HomePage() {
                             >
                                 Ver perfil
                             </Button>
-                            <Button
-                                variant="simple"
-                                onClick={() => goTo(`/Profile/${auth.user?._id}`)}
-                            >
-                                Métricas
-                            </Button>
+                            
+                            <Drawer>
+    <DrawerTrigger>
+        <Button
+            variant="simple"
+            onClick={() => console.log('metricas')}
+        >
+            Métricas
+        </Button>
+    </DrawerTrigger>
+    <DrawerContent className="bg-grey min-h-[500px]">
+        <div className="min-w-[600px] mx-auto">
+            <DrawerHeader>
+                <div className="flex justify-between gap-4">
+                    <div className="text-3xl mt-10 text-mainBeige">Métricas do Perfil</div>
+                </div>
+            </DrawerHeader>
+            <div className="p-5">
+                {auth.user?.createdAt ? (
+                    <div className="text-center ">
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3 ">
+                            <p>Data de Criação: {new Date(auth.user.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>{`Este perfil foi criado há ${new Date().getFullYear() - new Date(auth.user.createdAt).getFullYear()} anos.`}</p>
+                        </div>
+
+                        {new Date().getFullYear() - new Date(auth.user.createdAt).getFullYear() >= 1 && (
+                            <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                                <p>Este perfil possui mais de 1 ano de existência!</p>
+                            </div>
+                        )}
+
+                        {new Date().getFullYear() - new Date(auth.user.createdAt).getFullYear() >= 5 && (
+                            <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                                <p>Este perfil tem mais de 5 anos. Parabéns pela jornada!</p>
+                            </div>
+                        )}
+
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Data de criação do perfil: {new Date(auth.user.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        
+
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Idade do usuário: {new Date().getFullYear() - new Date(auth.user.birthDate).getFullYear()} anos</p>
+                        </div>
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Habilidades cadastradas: {auth.user.skills.length}</p>
+                        </div>
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Experiências profissionais: {auth.user.experience.length}</p>
+                        </div>
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Formações acadêmicas: {auth.user.academic.length}</p>
+                        </div>
+                        <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                            <p>Tipo de usuário: {auth.user.isContractor ? 'Contratante' : 'Freelancer'}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="border rounded px-5 py-3 border-lightBlueText text-darkBlueText my-3">
+                        <p>Nenhuma métrica disponível. Por favor, verifique se a data de criação do perfil está correta.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    </DrawerContent>
+</Drawer>
+
+
                         </div>
                         </div>
                     </div>
@@ -254,7 +336,6 @@ export function HomePage() {
                                 <p className="text-2xl lg:text-lg text-gray-500 text-center my-5">
                                     Você ainda não possui vagas recomendadas. Atualize as informações de seu perfil para receber recomendações ou confira a página de vagas.
                                 </p>
-                                <p>exemplo {new Date(auth.user?.createdAt).getFullYear() }</p>
                                 <Pagination
                                     totalPages={Math.ceil(positions.length / itemsPerPage)}
                                     currentPage={currentPage}
@@ -294,13 +375,13 @@ export function HomePage() {
                     <div className="lg:w-1/6 flex flex-col items-right space-y-6 pt-16 mb-64 lg:mb-0">
                         {userType === 'freelancer' && (
                             <>
-                                <Button
+                                {/* <Button
                                     variant="mainClear"
                                     leftIcon={<HiOutlineBookmark />}
                                     onClick={() => console.log('Vagas salvas clicado')}
                                 >
                                     Vagas salvas
-                                </Button>
+                                </Button> */}
                                 <Button
                                     variant="mainClear"
                                     leftIcon={<RiBrush4Line />}

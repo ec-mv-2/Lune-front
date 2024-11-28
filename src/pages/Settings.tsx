@@ -41,7 +41,7 @@ export function Settings() {
 
 
                 <div className="  flex flex-col">
-                    <div className="pl-16">
+                    <div className="pl-16 ">
 
                         <div className="text-2xl text-darkBlueText " id="Help-text">
                             <p>Conta</p>

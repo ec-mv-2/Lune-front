@@ -404,16 +404,22 @@ export const useBackendApi = () =>({
   },
   
   getNotifications: async (userId: string) => {
-    const response = await axios.get(`${URL}/getNotifications/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${storageData}`,
-      },
-    });
+    try {
+      const response = await axios.get(`${URL}/getNotifications/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${storageData}`,
+        },
+      });
   
-    return {
-      notifications: response.data,
-    };
+      return {
+        notifications: response.data,
+      };
+    } catch (error) {
+      console.error("Erro ao buscar notificações:", error);
+      throw error;  
+    }
   },
+  
 
   deleteUser: async()=> {
     const response = await axios.delete(`${URL}/DeleteUser`,{

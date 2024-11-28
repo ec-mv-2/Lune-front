@@ -1,4 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/AuthContext'; 
 
 interface SidebarProps {
     sidebarIsOpen: boolean;
@@ -8,6 +10,7 @@ interface SidebarProps {
 export function Sidebar({ sidebarIsOpen, closeSidebar }: SidebarProps) {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext); 
 
     function goTo(navigateTo: string) {
         window.scrollTo({ top: 0 });
@@ -19,24 +22,31 @@ export function Sidebar({ sidebarIsOpen, closeSidebar }: SidebarProps) {
 
     return (
         <>
-           
             {sidebarIsOpen && (
                 <div 
-                    className="fixed inset-0 bg-transparent z-96 " 
+                    className="fixed inset-0 bg-transparent z-96" 
                     onClick={closeSidebar} 
                 />
             )}
 
             <ul
-                className={`text-2xl lg:text-base absolute top-32 lg:top-28  left-2 h-[calc(100vh-235px)] lg:h-[calc(100vh-110px)] w-[400px] lg:w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
+                className={`text-2xl lg:text-base absolute top-32 lg:top-28 left-2 h-[calc(100vh-235px)] lg:h-[calc(100vh-110px)] w-[400px] lg:w-64 py-48 px-12 bg-whiteLight transition-transform duration-300 ease-in-out z-20 ${
                     sidebarIsOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
-                <div className={`pl-6 ${isActive('/HomePage') ? 'rounded-full px-24 py-3 my-6 bg-grey' : 'my-6'}`}>
-                    <li className="font-light cursor-pointer" onClick={() => goTo('/HomePage')}>
-                        Home
-                    </li>
-                </div>
+                {user && user.isADM ? (
+                    <div className={`pl-6 ${isActive('/Dashboard') ? 'rounded-full px-24 py-3 my-6 bg-grey' : 'my-6'}`}>
+                        <li className="font-light cursor-pointer" onClick={() => goTo('/Dashboard')}>
+                            Dashboard
+                        </li>
+                    </div>
+                ) : (
+                    <div className={`pl-6 ${isActive('/HomePage') ? 'rounded-full px-24 py-3 my-6 bg-grey' : 'my-6'}`}>
+                        <li className="font-light cursor-pointer" onClick={() => goTo('/HomePage')}>
+                            Home
+                        </li>
+                    </div>
+                )}
                 <div className={`pl-6 ${isActive('/Positions') ? 'rounded-full px-24 py-3 my-6 bg-grey' : 'my-6'}`}>
                     <li className="font-light cursor-pointer" onClick={() => goTo('/Positions')}>
                         Vagas

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CircumIcon from '@klarr-agency/circum-icons-react';
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -9,6 +9,7 @@ import testeimg from "../assets/unnamed.png";
 import { AuthContext } from '@/contexts/AuthContext';
 
 import { Sidebar } from './Sidebar';
+import { useBackendApi } from '@/hooks/useBackendApi';
 
 
 
@@ -25,6 +26,89 @@ export function Header() {
   const [chatIsOpenbt, setChatIsOpenbt] = useState(false);
   const [exitIsOpenbt, setExitIsOpenbt] = useState(false);
   const auth = useContext(AuthContext);
+  const [notifications, setNotifications] = useState([]);
+  const [messages, setMessages] = useState([]);
+
+  const { user } = useContext(AuthContext);
+
+  const api = useBackendApi();
+
+  
+  // interface User {
+  //   _id: string;
+  //   name: string;
+  // }
+
+  const fetchNotifications = async () => {
+    if (!user) {
+      console.warn("Usuário não está definido.");
+      return;
+    }
+
+    const userId = user._id;
+    try {
+      const response = await api.getNotifications(userId);
+
+      if (response?.notifications?.notifications && Array.isArray(response.notifications.notifications)) {
+        console.log("Notificações recebidas:", response.notifications.notifications);
+        setNotifications(response.notifications.notifications);
+      } else {
+        console.warn("Resposta da API não contém notificações esperadas:", response);
+        setNotifications([]);
+      }
+    } catch (error: any) {
+      console.error("Erro ao buscar notificações:", error);
+    } 
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (user) {
+        fetchNotifications();
+      }
+    }, 300); 
+  
+    return () => clearInterval(interval); 
+  }, [user]);
+  
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [user]);
+
+
+  const fetchMessages = async () => {
+    if (!user) {
+      console.warn("Usuário não está definido.");
+      return;
+    }
+  
+    const userId = user._id;
+    try {
+      const response = await api.getMessages(userId); 
+      
+      if (response?.messages && Array.isArray(response.messages)) {
+        console.log("Mensagens recebidas:", response.messages);
+        setMessages(response.messages);
+      } else {
+        console.warn("Resposta da API não contém mensagens esperadas:", response);
+        setMessages([]);
+      }
+    } catch (error: any) {
+      console.error("Erro ao buscar mensagens:", error);
+    }
+  };
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (user) {
+        fetchMessages();
+      }
+    }, 300); 
+    
+    return () => clearInterval(interval);
+  }, [user]);
+
 
   function goTo(navigateTo: string) {
     window.scrollTo({ top: 0 });
@@ -46,51 +130,52 @@ export function Header() {
               <RxHamburgerMenu className='text-5xl lg:text-lg' />
             </button>
             <img
-              src={logo}
-              onClick={() => goTo(`/HomePage`)}
-              className="h-20 lg:h-16 mb-3 ml-4 cursor-pointer "
-              alt="Logo do site Lune, com fonte azul e uma pequena lua dourada acima da letra U"
-            />
+          src={logo}
+          onClick={() => {
+            if (user?.isADM) {
+              navigate('/Dashboard'); 
+            } else {
+              navigate('/HomePage'); 
+            }
+          }}
+          className="h-20 lg:h-16 mb-3 ml-4 cursor-pointer"
+          alt="Logo do site Lune, com fonte azul e uma pequena lua dourada acima da letra U"
+        />
 
           {sidebarIsOpen && <Sidebar sidebarIsOpen={sidebarIsOpen} closeSidebar={() => setSidebarIsOpen(false)} />}
 
-          <ul className="hidden lg:flex lg:gap-4 lg:justify-center lg:flex-grow ">
-            
+          <ul className="hidden lg:flex lg:gap-4 lg:justify-center lg:flex-grow">
             <li className={`px-8 hover:text-mainBeige cursor-pointer ${isActive('/Notifications') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
-                <Popover open={notificationIsOpen} onOpenChange={setNotificationIsOpen}>
-                  <PopoverTrigger asChild>
-                    <button>
-                      <CircumIcon name="bell_on" size={35} />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-72">
-                    <div className="grid gap-4">
-                      <div className="space-y-2 text-center">
-                        <h4 className="leading-none text-mainBeige text-xl">Notificações</h4>
-                        <p className="text-lg text-muted-foreground">Você possui notificações novas.</p>
-                      </div>
-                      <div className="grid gap-2">
-                        <div className="grid grid-cols-4 items-center gap-4">
+            <Popover open={notificationIsOpen} onOpenChange={setNotificationIsOpen}>
+                <PopoverTrigger asChild>
+                  <button>
+                    <CircumIcon name="bell_on" size={35} />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72">
+                <div className="grid gap-4">
+                  <div className="space-y-2 text-center">
+                    <h4 className="leading-none text-mainBeige text-xl">Notificações</h4>
+                    <p className="text-lg text-muted-foreground">Você possui {notifications.length} notificações novas.</p>
+                  </div>
+                  <div className="grid gap-2">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 5).map((notification, index) => (
+                        <div key={index} className="grid grid-cols-4 items-center gap-4">
                           <span className="font-medium col-span-1 text-mainBeige ml-1">Novo</span>
-                          <p className="col-span-3">Retorno da vaga "Desenvolvedor"</p>
+                          <p className="col-span-3">{notification.message}</p>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <span className="font-medium col-span-1 text-mainBeige ml-1">Novo</span>
-                          <p className="col-span-3">Retorno da vaga "Designer"</p>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <p className="col-span-6 ml-1">Senha alterada em 26/09/2024. Não foi você? Clique aqui.</p>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <p className="col-span-6 ml-1">Senha alterada em 20/09/2024. Não foi você? Clique aqui.</p>
-                        </div>
-                        <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Notifications`)}>
-                          Ver todas notificações (7)
-                        </p>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                      ))
+                    ) : (
+                      <p className="col-span-4 text-center text-muted-foreground">Nenhuma notificação recente.</p>
+                    )}
+                    <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Notifications`)}>
+                      Ver todas notificações
+                    </p>
+                  </div>
+                </div>
+              </PopoverContent>
+              </Popover>
               </li>
 
               <li className={`px-8 hover:text-mainBeige cursor-pointer ${isActive('/Profile') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
@@ -125,39 +210,38 @@ export function Header() {
               </li>
 
               <Popover open={chatIsOpen} onOpenChange={setChatIsOpen}>
-                <PopoverTrigger asChild>
-                  <button>
-                    <li className={`px-8 hover:text-mainBeige cursor-pointer ${isActive('/Chat') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
-                      <CircumIcon name="chat_2" size={36} />
-                    </li>
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-72">
-                  <div className="grid gap-4">
-                    <div className="space-y-2 text-center">
-                      <h4 className="leading-none text-mainBeige text-xl">Notificações</h4>
-                      <p className="text-sm text-muted-foreground">Você tem 3 mensagens não lidas.</p>
-                    </div>
-                    <div className="grid gap-2">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <span className="font-medium col-span-1">Novo</span>
-                        <p className="col-span-3">Seu pedido foi enviado</p>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <span className="font-medium col-span-1">Novo</span>
-                        <p className="col-span-3">Sua senha foi alterada</p>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <span className="font-medium col-span-1">Novo</span>
-                        <p className="col-span-3">Sua assinatura está prestes a expirar</p>
-                      </div>
-                      <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Chat`)}>
-                        Ver todas conversas
-                      </p>
-                    </div>
+              <PopoverTrigger asChild>
+                <button>
+                  <li className={`px-8 hover:text-mainBeige cursor-pointer ${isActive('/Chat') ? 'text-mainBeige' : 'text-darkBlueText'}`}>
+                    <CircumIcon name="chat_2" size={36} />
+                  </li>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-72">
+                <div className="grid gap-4">
+                  <div className="space-y-2 text-center">
+                    <h4 className="leading-none text-mainBeige text-xl">Conversas</h4>
+                    <p className="text-sm text-muted-foreground">Você tem {messages.length} mensagens.</p>
                   </div>
-                </PopoverContent>
-              </Popover>
+                  <div className="grid gap-2">
+                    {messages.length > 0 ? (
+                      messages.slice(0, 3).map((message, index) => (
+                        <div key={index} className="grid grid-cols-4 items-center gap-4">
+                          <span className="font-medium col-span-1">Novo</span>
+                          <p className="col-span-3 text-truncate">{message.content}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="col-span-4 text-center text-muted-foreground">Nenhuma mensagem recente.</p>
+                    )}
+                    
+                  </div>
+                  <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Chat`)}>
+                      Ver todas conversas
+                    </p>
+                </div>
+              </PopoverContent>
+            </Popover>
 
               <Popover open={exitIsOpen} onOpenChange={setExitIsOpen}>
                 <PopoverTrigger asChild>
@@ -203,33 +287,29 @@ export function Header() {
                       <CircumIcon name="bell_on" size={40} />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="lg:w-72 w-[400px] text-3xl lg:text-base mx-5">
-                    <div className="grid gap-4">
-                      <div className="space-y-2 text-center">
-                        <h4 className="leading-none text-mainBeige ">Notificações</h4>
-                        <p className="text-2xl text-muted-foreground">Você possui notificações novas.</p>
-                      </div>
-                      <div className="grid gap-2">
-                        <div className="grid grid-cols-4 items-center gap-4">
+                  <PopoverContent className="w-72">
+                <div className="grid gap-4">
+                  <div className="space-y-2 text-center">
+                    <h4 className="leading-none text-mainBeige text-xl">Notificações</h4>
+                    <p className="text-lg text-muted-foreground">Você possui {notifications.length} notificações novas.</p>
+                  </div>
+                  <div className="grid gap-2">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 5).map((notification, index) => (
+                        <div key={index} className="grid grid-cols-4 items-center gap-4">
                           <span className="font-medium col-span-1 text-mainBeige ml-1">Novo</span>
-                          <p className="col-span-3">Retorno da vaga "Desenvolvedor"</p>
+                          <p className="col-span-3">{notification.message}</p>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <span className="font-medium col-span-1 text-mainBeige ml-1">Novo</span>
-                          <p className="col-span-3">Retorno da vaga "Designer"</p>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <p className="col-span-6 ml-1">Senha alterada em 26/09/2024. Não foi você? Clique aqui.</p>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <p className="col-span-6 ml-1">Senha alterada em 20/09/2024. Não foi você? Clique aqui.</p>
-                        </div>
-                        <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Notifications`)}>
-                          Ver todas notificações (7)
-                        </p>
-                      </div>
-                    </div>
-                  </PopoverContent>
+                      ))
+                    ) : (
+                      <p className="col-span-4 text-center text-muted-foreground">Nenhuma notificação recente.</p>
+                    )}
+                    <p className='text-center pt-6 pb-2 text-mainBeige cursor-pointer' onClick={() => goTo(`/Notifications`)}>
+                      Ver todas notificações
+                    </p>
+                  </div>
+                </div>
+              </PopoverContent>
                 </Popover>
               </li>
 
@@ -275,7 +355,7 @@ export function Header() {
                 <PopoverContent className="w-[400px] text-3xl lg:text-base mx-5">
                   <div className="grid gap-4">
                     <div className="space-y-2 text-center">
-                      <h4 className="leading-none text-mainBeige ">Notificações</h4>
+                      <h4 className="leading-none text-mainBeige ">Conversas</h4>
                       <p className="text-2xl text-muted-foreground">Você tem 3 mensagens não lidas.</p>
                     </div>
                     <div className="grid gap-2">

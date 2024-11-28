@@ -71,9 +71,9 @@ export function Positions() {
   }, [reload]);
 
 
-  function funcreload(){
-    setReload(!reload)
-}
+//   function funcreload(){
+//     setReload(!reload)
+// }
 
 /*  useEffect(() => {
     async function fetchPositions() {

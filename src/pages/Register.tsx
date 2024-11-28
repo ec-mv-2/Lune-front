@@ -4,9 +4,11 @@ import { BsPerson, BsEnvelope, BsCheckCircle  } from "react-icons/bs";
 import { LiaCertificateSolid } from "react-icons/lia";
 import { useNavigate, useParams } from "react-router-dom";
 
+
 import emailjs from '@emailjs/browser'
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { Input } from "@/components/ui/Input";
+
 
 import logo from '../assets/Logo.png'
 import { AuthContext } from "@/contexts/AuthContext";
@@ -262,10 +264,10 @@ export function Register(){
                         </div>
                         <div className="w-2/5 flex flex-col justify-center">
                             <div className="flex">
-                                <p className=" relative top-2 left-3 px-2 bg-whiteLight text-sm">Código</p>
+                                <p className=" relative top-2 left-3 px-2 bg-whiteLight text-md">Código</p>
                             </div>
                             <div className="flex flex-col justify-center gap-10">
-                                <input className="border-[1px] border-blueText bg-whiteLight rounded-md h-9 w-full focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"
+                                <input className="border-[1px] border-blueText bg-whiteLight rounded-md h-9 w-full focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200 py-6"
                                 type="text"
                                 id="inputCode"
                                 onChange={(e)=>setCode(Number(e.target.value))}
