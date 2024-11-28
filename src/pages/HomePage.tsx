@@ -399,7 +399,7 @@ export function HomePage() {
                                 <Button
                                     variant="mainClear"
                                     leftIcon={<SlEnvolopeLetter />}
-                                    onClick={() => console.log('Carta de apresentação clicado')}
+                                    onClick={() => goTo(`/CoverLetter`)}
                                 >
                                     Carta de apresentação
                                 </Button>

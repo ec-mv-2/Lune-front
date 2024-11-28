@@ -208,6 +208,12 @@ export function Profile () {
         }
     }
 
+
+    const goTo = (navigateTo: string) => {
+        window.scrollTo({ top: 0 });
+        navigate(navigateTo);
+    };
+    
     return(
         <Page className="">
             <div className="min-h-screen bg-grey">
@@ -288,7 +294,7 @@ export function Profile () {
                                 :
                                 <button className="border-2 border-blueText py-5 px-10 rounded-xl">Vagas salvas</button>
                                 }
-                                <button className="border-2 border-blueText py-5 px-10 rounded-xl">Carta de apresentação</button>
+                                <button className="border-2 border-blueText py-5 px-10 rounded-xl" onClick={() => goTo(`/CoverLetter`)}>Carta de apresentação</button>
                             </div>
                         </div>      
                     </div>     
