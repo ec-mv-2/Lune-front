@@ -97,10 +97,10 @@ export function Positions() {
     <Page className="flex justify-around">
       <div className="flex gap-20">
         <div className="mt-20 flex flex-col gap-3 pt-10 ">
-          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Tecnologia</button>
-          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Panfletagem</button>
-          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Limpeza doméstica</button>
-          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4">Outros</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4 hidden">Tecnologia</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4 hidden">Panfletagem</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4 hidden">Limpeza doméstica</button>
+          <button className="border border-lightBlueText min-w-56  text-darkBlueText  rounded-md shadow-sm py-2 px-4 hidden">Outros</button>
         </div>
 
         <div className="flex  flex-col gap-3 ">
@@ -109,7 +109,7 @@ export function Positions() {
           <div className="flex items-center gap-2">
             <input type="text" placeholder="Desenvolvedor" className="border border-lightBlueText rounded-md py-1 px-2 my-3 min-w-96 max-w-min" />
             <div className=""></div>
-            <p className="text-2xl text-darkBlueText ml-6 "><BiSliderAlt /></p>
+            <p className="text-2xl text-darkBlueText ml-6 hidden"><BiSliderAlt /></p>
           </div>
           <div className="flex items-center">
             <Dropdown onChange={setOrder} />

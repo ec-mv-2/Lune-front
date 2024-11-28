@@ -7,6 +7,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import { useNavigate } from "react-router-dom";
 import { useCepApi } from "@/hooks/useCepApi";
+import { IoClipboardOutline } from "react-icons/io5";
 
 interface Job {
   _id: string;
@@ -15,15 +16,17 @@ interface Job {
   summary: string;
   skill: string[];
   location: string;
+  contractorId: string
 }
 
 interface JobCardProps extends AllHTMLAttributes<HTMLDivElement>{
   job: Job;
   isContractor: boolean; 
+  
 }
 
 export function JobCard({ job, ...props}: JobCardProps) {
-  const { _id, title, enterprise, summary, skill, location } = job;
+  const { _id, title, enterprise, summary, skill, location, contractorId } = job;
   
   const backendApi = useBackendApi()
   const cepApi = useCepApi();
@@ -47,6 +50,8 @@ export function JobCard({ job, ...props}: JobCardProps) {
   const [openDialogEdit, setOpenDialogEdit] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = useState(false)
   const [step, setStep] = useState(1);
+
+
 
       const auth = useContext(AuthContext)
 
@@ -165,10 +170,13 @@ export function JobCard({ job, ...props}: JobCardProps) {
         <div className="flex flex-col md:flex-row justify-between items-start">
           <p className="text-lg font-semibold text-darkBlueText">{title}</p>
           <div className="flex gap-5 text-2xl text-gray-600 mt-2 md:mt-0">
-            <p className="cursor-pointer hover:text-lightBlueText"><CiShare2 /></p>
-     
-
+            {contractorId == auth.user?._id?
+            <p className="cursor-pointer hover:text-lightBlueText"><IoClipboardOutline /></p>
             
+            : 
+            <p className="cursor-pointer hover:text-lightBlueText"><CiShare2 /></p>
+
+            }
           </div>
         </div>
         <p className="text-md text-gray-500 italic">Empresa: <span className="font-semibold text-blueText">{enterprise}</span></p>
@@ -342,6 +350,9 @@ export function JobCard({ job, ...props}: JobCardProps) {
                   </div>
                 </DialogContent>
               </Dialog>
+              
+              <button onClick={()=>navigate(`/Job/${_id}`)} type="submit">Visualizar</button>
+
             </div>
           ) : (
             <Button variant="strongBlue" rightIcon={null} onClick={() =>navigate(`/Job/${_id}`)}>

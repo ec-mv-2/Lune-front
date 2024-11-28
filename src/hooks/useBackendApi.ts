@@ -284,8 +284,8 @@ export const useBackendApi = () =>({
   },
 
 
-  listPositionByUser: async()=>{
-    const response = await axios.get(`${URL}/listPositionByUser`, {
+  listPositionByUser: async(userId: string)=>{
+    const response = await axios.get(`${URL}/listPositionByUser/${userId}`, {
       headers: {
         Authorization: `Bearer ${storageData}`,
       },

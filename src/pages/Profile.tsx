@@ -79,7 +79,6 @@ export function Profile () {
     const backendApi = useBackendApi()
     const [nameSkill, setNameSkill] = useState("")
     const {id} = useParams()
-    const [openDialogUser, setOpenDialogUser] = useState(false)
     const [openDialogExperience, setOpenDialogExperience] = useState(false)
     const [openDialogAcademic, setOpenDialogAcademic] = useState(false)
     const [user, setUser] = useState<UserProps>()
@@ -106,10 +105,13 @@ export function Profile () {
         getUser()
 
         async function listMyPositions(){
-            const data = await backendApi.listPositionByUser()
-            if(data){
-                setMyPositions(data.position)
+            if(id){
+                const data = await backendApi.listPositionByUser(id)
+                if(data){
+                    setMyPositions(data.position)
+                }
             }
+            
         }
         listMyPositions()
     }, [reload])
@@ -196,7 +198,6 @@ export function Profile () {
         const data = Object.fromEntries(formData);
 
         await backendApi.updateUser(data.name as string, data.bio as string, "", "", "", "", "")
-        wait().then(() => setOpenDialogUser(false));
         funcreload()
     }
 
@@ -226,7 +227,7 @@ export function Profile () {
                                 <h1>{user?.name}</h1>
 
                                 {user?._id == auth.user?._id?
-                                    <Dialog onOpenChange={setOpenDialogUser} open={openDialogUser}>
+                                    <Dialog>
                                         <DialogTrigger>
                                             <span><BsPencil className="h-6"/></span>
                                         </DialogTrigger>
@@ -240,7 +241,10 @@ export function Profile () {
                                                     <p className="text-darkBlueText max-w-20 relative top-2 left-3 px-2 bg-whiteLight text-sm">Biografia</p>
                                                     <textarea name="bio" defaultValue={user?.bio} className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
                                                 </div>
-                                                <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                <DialogClose>
+                                                    <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+
+                                                </DialogClose>
                                             </form>
                                         </DialogContent>
                                     </Dialog>
@@ -350,7 +354,10 @@ export function Profile () {
                                                                 )
                                                             })}
                                                         </div>
-                                                        <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                        <DialogClose>
+                                                            <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+
+                                                        </DialogClose>
                                                     </form>
                                                 </DialogContent>
                                             </Dialog>
@@ -415,7 +422,10 @@ export function Profile () {
                                                     <p className="text-darkBlueText max-w-20  relative top-2 left-3 px-2 bg-whiteLight text-sm">Atividades</p>
                                                     <textarea name="atividades" className="w-full py-2 min-h-24 rounded-md border-[1px] border-blueText bg-whiteLight focus:outline-none px-3 focus:border-lightBlueText transition-all duration-200"/>
                                                 </div>
-                                                <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                <DialogClose>
+                                                    <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                    
+                                                </DialogClose>
                                             </form>
                                         </DialogContent>
                                     </Dialog>
@@ -493,7 +503,10 @@ export function Profile () {
                                                 <Input type="date" name="inicio" title="Data de inicio"/>
                                                 <Input type="date" name="termino" title="Data de término"/>
                                                 <Input name="formacao" title="Formação"/>
-                                                <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                
+                                                <DialogClose>
+                                                    <button className="h-9 bg-darkBlueText text-white px-10 rounded-md hover:brightness-75 transition-all duration-200">Enviar</button>
+                                                </DialogClose>
                                             </form>
                                         </DialogContent>
                                     </Dialog>

@@ -100,7 +100,8 @@ export function Chat() {
         <div className="mx-10">
           <div className="p-4 pt-20 max-w-7xl min-w-max mx-auto flex gap-14">
             <div className="w-1/3 flex flex-col gap-2">
-              {users.map((user) => (
+              
+              {users.filter((user)=>user._id!=auth.user?._id).map((user) => (
                 <div
                   key={user._id}
                   className={`px-8 py-6 rounded cursor-pointer transition duration-200 ease-in-out ${

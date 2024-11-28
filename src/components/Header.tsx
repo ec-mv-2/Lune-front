@@ -83,21 +83,28 @@ export function Header() {
       return;
     }
   
-    const userId = user._id;
-    try {
-      const response = await api.getMessages(userId); 
-      
-      if (response?.messages && Array.isArray(response.messages)) {
-        console.log("Mensagens recebidas:", response.messages);
-        setMessages(response.messages);
-      } else {
-        console.warn("Resposta da API não contém mensagens esperadas:", response);
-        setMessages([]);
+    useEffect(() => {
+
+    
+      async function listMessages() {
+        if (!auth.user) {return}
+        const data = await api.ListMessages(auth.user._id);
+        if (data) {
+          setMessages(data.messages.messages);
+        }
       }
-    } catch (error: any) {
-      console.error("Erro ao buscar mensagens:", error);
-    }
-  };
+      listMessages();
+
+      const interval = setInterval(() => {
+      if (user) {
+        fetchMessages();
+      }
+    }, 300); 
+    
+    return () => clearInterval(interval);
+    
+  }, [auth.user, user]);
+}
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -228,7 +235,7 @@ export function Header() {
                       messages.slice(0, 3).map((message, index) => (
                         <div key={index} className="grid grid-cols-4 items-center gap-4">
                           <span className="font-medium col-span-1">Novo</span>
-                          <p className="col-span-3 text-truncate">{message.content}</p>
+                          <p className="col-span-3 text-truncate">{message.message}</p>
                         </div>
                       ))
                     ) : (

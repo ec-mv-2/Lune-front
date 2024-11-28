@@ -8,10 +8,11 @@ import { RegisterAdm } from "@/pages/RegisterAdm";
 export function RequireAuth({children}: {children: JSX.Element}) {
     const auth = useContext(AuthContext);
     const location = useLocation()
-    if(!auth.user && location.pathname == "/Login"){
-        return <Login/>
-    }else if(!auth.user && location.pathname == "/RegisterAdm"){
+    
+    if(!auth.user && location.pathname == "/RegisterAdm"){
         return <RegisterAdm/>
+    }else if(!auth.user){
+        return <Login/>
     }
     return children
 }

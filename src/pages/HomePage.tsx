@@ -37,6 +37,8 @@ import {
 import { Input } from "@/components/ui/Input";
 import { FaRegEdit } from "react-icons/fa";
 import { CiTrash } from "react-icons/ci";
+import { format } from "date-fns";
+import { error } from "console";
 
 interface jobPosition {
     _id: string;
@@ -62,6 +64,7 @@ export function HomePage() {
     const [step, setStep] = useState(1);
     const [workModel, setWorkModel] = useState('distancia');
     const cepApi = useCepApi();
+  
 
     const [cep, setCep] = useState("");
     const [remuneracao, setRemuneracao] = useState("");
@@ -150,7 +153,10 @@ export function HomePage() {
     const createJobPosition = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        
+        if(!startDate) return 
+        if(!endDate) return
+        const dateFormated = format(startDate, 'MM/dd/yyyy')
+        const dateFormatedEnd = format(endDate, 'MM/dd/yyyy')
 
         const newPosition = {
             title,
@@ -160,8 +166,8 @@ export function HomePage() {
             skill: skills,
             jobModel: workModel,
             location,
-            startDate: startDate || "", 
-            endDate: endDate || "", 
+            startDate: dateFormated || "", 
+            endDate: dateFormatedEnd || "", 
             degree: education,
             experience,
             isPrivate,
@@ -451,11 +457,11 @@ export function HomePage() {
                                                     value={education}
                                                     onChange={(e) => setEducation(e.target.value)}
                                                     >
-                                                        <option value="ensinomedio">Ensino médio</option>
-                                                        <option value="superiorcursando">Ensino superior (cursando)</option>
-                                                        <option value="superiorcompleto">Ensino superior (completo)</option>
-                                                        <option value="bachareladocursando">Bacharelado (cursando)</option>
-                                                        <option value="bachareladocompleto">Bacharelado (completo)</option>
+                                                        <option value="Ensino médio">Ensino médio</option>
+                                                        <option value="Superior cursando">Ensino superior (cursando)</option>
+                                                        <option value="Superior completo">Ensino superior (completo)</option>
+                                                        <option value="Bacharelado cursando">Bacharelado (cursando)</option>
+                                                        <option value="Bacharelado completo">Bacharelado (completo)</option>
                                                         <option value="nulo">Sem preferência de escolaridade</option>
                                                         
                                                     </select>
@@ -509,10 +515,10 @@ export function HomePage() {
                                                     value={workModel}
                                                     onChange={(e) => setWorkModel(e.target.value)}
                                                     >
-                                                        <option value="distancia">À distância</option>
-                                                        <option value="presencial">Presencial</option>
+                                                        <option value="À distância">À distância</option>
+                                                        <option value="Presencial">Presencial</option>
                                                     </select>
-                                                    {workModel === 'presencial' && (
+                                                    {workModel === 'Presencial' && (
                                                         <div>
                                                         <Input title="CEP" onChange={(e)=>getAddress(e.target.value)}/>
                                                   <Input readOnly title="Estado" value={location} onChange={(e)=>setLocation(e.target.value)}/>

@@ -1,7 +1,7 @@
 import Page from "@/components/Page";
 import img from "../assets/unnamed.png";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useBackendApi } from "@/hooks/useBackendApi";
 import Button from "@/components/ui/button";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -24,6 +24,8 @@ interface jobProps{
 }
 
 interface contractorProps{
+    _id: string
+    name: string
     bio: string
 }
 
@@ -31,7 +33,7 @@ interface contractorProps{
 export function Job() {
 
     const [job, setJob] = useState<jobProps>()
-
+    const navigate = useNavigate()
     const [contrator, setContrator] = useState<contractorProps>()
 
     const auth = useContext(AuthContext)
@@ -137,14 +139,14 @@ export function Job() {
 
                         <div className=" text-justify" >
 
-                            <p className=" text-whiteLight pt-8 pb-[7px] pl-5 text-[22px]">Oscorp Inc.</p>
+                            <p className=" text-whiteLight pt-8 pb-[7px] pl-5 text-[22px]">{contrator?.name}</p>
 
                             <p className="text-whiteLight text-[15px] pl-5 pr-5"> {contrator?.bio}</p>
 
                   
 
                             <div className=" flex justify-center">
-                                <button className=" bg-mainBeige  text-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200 ">Ver mais</button>
+                                <button className=" bg-mainBeige  text-white px-3 py-1 rounded hover:brightness-75 transition-all duration-200 " onClick={()=>navigate(`/Profile/${contrator?._id}`)}>Ver mais</button>
                             </div>
                         </div>
                     </div>

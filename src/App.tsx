@@ -11,7 +11,6 @@ import { Positions } from './pages/Positions'
 import { Profile } from './pages/Profile'
 import { Settings } from './pages/Settings'
 import { Notifications } from './pages/Notifications'
-import { LoginAdm } from './pages/LoginAdm'
 import { Dashboard } from './pages/Dashboard'
 import { Home } from './pages/Home'
 import { CoverLetterForm } from './pages/CoverLetter'
@@ -34,10 +33,8 @@ function App() {
             <Route path='/Positions' element={<Positions/>}/>
             <Route path='/Notifications' element={<Notifications/>}/>
             <Route path='/Dashboard' element={<Dashboard/>}/>
-            <Route path='/LoginAdm' element={<LoginAdm/>}/>
             <Route path='/RegisterAdm' element={<RequireAuth><HomePage/></RequireAuth>}/>
             <Route path='/CoverLetter' element={<RequireAuth><CoverLetterForm/></RequireAuth>}/>
-
           </Routes>
         </AuthProvider>
       </BrowserRouter>

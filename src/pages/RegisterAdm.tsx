@@ -7,6 +7,7 @@ import emailjs from '@emailjs/browser'
 import { useBackendApi } from '@/hooks/useBackendApi'
 import { format } from 'date-fns';
 import { AuthContext } from '@/contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 export function RegisterAdm(){
     const cepApi = useCepApi()
 
@@ -31,7 +32,7 @@ export function RegisterAdm(){
 
     const auth = useContext(AuthContext)
     const backendApi = useBackendApi()
-
+    const navigate = useNavigate()
 
     const templateParams = {
         to_email: email,
@@ -99,11 +100,11 @@ export function RegisterAdm(){
     return(
         <div className="bg-whiteLight min-h-screen text-darkBlueText flex flex-col items-center w-screen ">
             <div className="p-7 flex items-center justify-between w-full ">
-                <div className='flex items-end'>
+                <div className='flex items-end' onClick={()=>navigate("/")}>
                     <img className="h-20 cursor-pointer"  src={logo} alt="" />
                     <h1 className='text-3xl'><i>Admin</i></h1>
                 </div>
-                <p className="text-darkBlueText">Já possuí uma conta? <span className="text-mainBeige cursor-pointer hover:underline">Faça login</span></p>
+                <p className="text-darkBlueText">Já possuí uma conta? <span className="text-mainBeige cursor-pointer hover:underline" onClick={()=>navigate("/Login")}>Faça login</span></p>
             </div>
 
             <div className={phase==1?`w-[800px]  my-10`:`w-[400px]  my-10`}>
