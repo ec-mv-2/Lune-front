@@ -296,14 +296,19 @@ export function Profile () {
                                 {user?.isContractor?
                                 null
                                 :
-                                <button className="border-2 border-blueText py-5 px-10 rounded-xl">Vagas salvas</button>
+                                <button className="border-2 border-blueText py-5 px-10 rounded-xl invisible">Vagas salvas</button>
                                 }
-                                <button className="border-2 border-blueText py-5 px-10 rounded-xl" onClick={() => goTo(`/CoverLetter`)}>Carta de apresentação</button>
+                                <button className="border-2 border-blueText py-5 px-10 rounded-xl invisible" onClick={() => goTo(`/CoverLetter`)}>Carta de apresentação</button>
                             </div>
                         </div>      
                     </div>     
                 </div>
-                {user?.isContractor?
+                {
+                user?.isADM?
+
+                    null
+                    :
+                user?.isContractor?
                 <div className="px-10 flex justify-between gap-y-20 my-20 text-blueText ">
                     <div className="flex-1 w-96 ">
                         <div className="bg-whiteLight p-5 min-h-52 rounded-md">

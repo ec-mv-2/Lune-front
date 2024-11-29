@@ -63,7 +63,7 @@ export function HomePage() {
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [openDialogDelete, setOpenDialogDelete] = useState(false)
     const [step, setStep] = useState(1);
-    const [workModel, setWorkModel] = useState('distancia');
+    const [workModel, setWorkModel] = useState('À distância');
     const cepApi = useCepApi();
   
 

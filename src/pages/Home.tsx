@@ -3,6 +3,8 @@ import ScrollReveal from "scrollreveal";
 import logo from "../assets/Logo.png"
 
 import img from "../assets/imgs (3).png"
+import imgMulher from '../assets/Thais_Roque_81b86e9d-e8c0-43bd-b6ae-f93125d77db3.jpg'
+import imgHomem from '../assets/premium_photo-1682096259050-361e2989706d.jpg'
 
 import { FaStar, FaYoutube  } from "react-icons/fa";
 import { BiBarChartAlt2 } from "react-icons/bi";
@@ -134,8 +136,8 @@ export function Home() {
                             </div>
                             <div className="flex flex-wrap justify-around w-4/6" id="scrollRevealReviews">
                                 <div className="flex flex-col items-center">
-                                    <h1 className="text-2xl ">Jhon Doe</h1>
-                                    <img className="rounded-full lg:h-52 lg:w-52 h-28 w-28 z-10" src="https://as1.ftcdn.net/v2/jpg/03/16/01/06/1000_F_316010690_Wm9W2fSc2KTVvuyuJDZSb7xDNZ77q0qC.jpg" alt="" />
+                                    <h1 className="text-2xl ">Marta Silva</h1>
+                                    <img className="rounded-full lg:h-52 lg:w-52 h-28 w-28 z-10 object-cover" src={imgMulher} alt="" />
                                     <div className="bg-[#dfdfdf] max-w-80 text-center lg:h-60 h-72 flex flex-col justify-end relative -top-20 p-5 rounded-md">
                                         <div className="flex gap-1 justify-center text-lg text-center">
                                             {starsNumber.map(star => {
@@ -144,12 +146,12 @@ export function Home() {
                                                 )
                                             })}
                                         </div>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                                        <p>O Lune é uma opção promissora para empresas que buscam agilidade e qualidade na contratação de freelancers.</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <h1 className="text-2xl ">Jhon Doe</h1>
-                                    <img className="rounded-full lg:h-52 lg:w-52 h-28 w-28 z-10" src="https://as1.ftcdn.net/v2/jpg/03/16/01/06/1000_F_316010690_Wm9W2fSc2KTVvuyuJDZSb7xDNZ77q0qC.jpg" alt="" />
+                                    <h1 className="text-2xl ">Bruno Oliveira</h1>
+                                    <img className="rounded-full lg:h-52 lg:w-52 h-28 w-28 z-10 object-cover" src={imgHomem} alt="" />
                                     <div className="bg-[#dfdfdf] max-w-80 text-center lg:h-60 h-72 flex flex-col justify-end relative -top-20 p-5 rounded-md">
                                         <div className="flex gap-1 justify-center text-lg text-center">
                                             {starsNumber.map(star => {
@@ -158,7 +160,7 @@ export function Home() {
                                                 )
                                             })}
                                         </div>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                                        <p>Embora tenha pontos a aprimorar, é uma solução viável para quem busca praticidade na contratação de serviços especializados.</p>
                                     </div>
                                 </div>
                             </div>
@@ -172,7 +174,7 @@ export function Home() {
                 </div>
                 <div>
                     <ul>
-                        <li>Product</li>
+                        <li className="hover:underline cursor-pointer" onClick={()=>navigate("/RegisterAdm")}>Admin</li>
                         <li>Features</li>
                         <li>Enterprise</li>
                         <li>Copilot</li>

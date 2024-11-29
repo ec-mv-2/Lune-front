@@ -1,5 +1,6 @@
 import Page from "@/components/Page";
 import img from "../assets/unnamed.png"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import {
     Drawer,
@@ -182,19 +183,23 @@ export function Dashboard(){
                                 </DrawerHeader>
                                 <div className="p-5">
                                     {!tab?
-                                        <div className="text-darkBlueText flex flex-col gap-3">
-                                            {contractors.map(user=>{
-                                                return(
-                                                    <div className="flex gap-3 items-center bg-white px-3 py-2 rounded hover:brightness-75 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/Profile/${user._id}`)}>
-                                                        <img className="h-10 rounded-full" src={img} alt="" />
-                                                        <div>
-                                                            <p>{user.name}</p>
-                                                            <p className="text-gray-500">Denúncias: 0</p>
+                                        <ScrollArea className="h-96">
+                                            <div className="text-darkBlueText flex flex-col gap-3 ">
+
+                                                {contractors.map(user=>{
+                                                    return(
+                                                        <div className="flex gap-3 items-center bg-white px-3 py-2 rounded hover:brightness-75 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/Profile/${user._id}`)}>
+                                                            <img className="h-10 rounded-full" src={img} alt="" />
+                                                            <div>
+                                                                <p>{user.name}</p>
+                                                                <p className="text-gray-500">Denúncias: 0</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+
+                                        </ScrollArea>
                                     :
                                         <ChartContainer config={chartConfig}>
                                             <LineChart
@@ -270,19 +275,23 @@ export function Dashboard(){
                                 </DrawerHeader>
                                 <div className="p-5">
                                     {!tab?
-                                        <div className="text-darkBlueText flex flex-col gap-3">
-                                            {freelancers.filter((freelancer)=> freelancer.isADM == false).map(user=>{
-                                                return(
-                                                    <div className="flex gap-3 items-center bg-white px-3 py-2 rounded">
-                                                        <img className="h-10 rounded-full" src={img} alt="" />
-                                                        <div>
-                                                            <p>{user.name}</p>
-                                                            <p className="text-gray-500">Denúncias: 0</p>
+                                        <ScrollArea className="h-96">
+
+                                            <div className="text-darkBlueText flex flex-col gap-3">
+                                                {freelancers.filter((freelancer)=> freelancer.isADM == false).map(user=>{
+                                                    return(
+                                                        <div className="flex gap-3 items-center bg-white px-3 py-2 rounded hover:brightness-75 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/Profile/${user._id}`)}>
+
+                                                            <img className="h-10 rounded-full" src={img} alt="" />
+                                                            <div>
+                                                                <p>{user.name}</p>
+                                                                <p className="text-gray-500">Denúncias: 0</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </ScrollArea>
                                     :
                                         <ChartContainer config={chartConfig}>
                                             <LineChart
@@ -356,10 +365,12 @@ export function Dashboard(){
                                 </DrawerHeader>
                                 <div className="p-5">
                                     {!tab?
+                                        <ScrollArea className="h-96">
+
                                         <div className="text-darkBlueText flex flex-col gap-3">
                                             {jobs.map(job=>{
                                                 return(
-                                                    <div className="flex gap-3 items-center bg-white px-3 py-2 rounded">
+                                                    <div className="flex gap-3 items-center bg-white px-3 py-2 rounded hover:brightness-75 transition-all duration-200 cursor-pointer" onClick={()=>navigate(`/Job/${job._id}`)}>
                                                         <div>
                                                             <p>{job.title}</p>
                                                             <p>Empresa: {job.enterprise}</p>
@@ -370,6 +381,8 @@ export function Dashboard(){
                                                 )
                                             })}
                                         </div>
+                                        </ScrollArea>
+
                                     :
                                         <ChartContainer config={chartConfig}>
                                             <LineChart

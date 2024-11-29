@@ -32,7 +32,7 @@ function App() {
             <Route path="/Job/:jobId" element={<Job/>}/>
             <Route path='/Positions' element={<Positions/>}/>
             <Route path='/Notifications' element={<Notifications/>}/>
-            <Route path='/Dashboard' element={<Dashboard/>}/>
+            <Route path='/Dashboard' element={<RequireAuth><Dashboard/></RequireAuth>}/>
             <Route path='/RegisterAdm' element={<RequireAuth><HomePage/></RequireAuth>}/>
             <Route path='/CoverLetter' element={<RequireAuth><CoverLetterForm/></RequireAuth>}/>
           </Routes>

@@ -7,6 +7,16 @@ import Button from "@/components/ui/button";
 import { AuthContext } from "@/contexts/AuthContext";
 import { IoCheckmark } from "react-icons/io5";
 import { ScrollUp } from "@/components/ui/scrollUp";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogClose
+  } from "@/components/ui/dialog"
+
 interface jobProps{
     title: string, 
     enterprise: string, 
@@ -66,6 +76,15 @@ export function Job() {
         funcreload()
     }
 
+    async function banjob(){
+        console.log(jobId)
+        if(!jobId){
+            return
+        }
+        await backendApi.banJob(jobId)
+        navigate("/Dashboard")
+    }
+
     return (
 
         <Page className="">
@@ -74,7 +93,31 @@ export function Job() {
 
                 <div className=" w-full mx-auto flex justify-between">
                     <p className="text-3xl text-darkBlueText">{job?.title}</p>
-                    {job?
+                    {auth.user?.isADM?
+                        <Dialog >
+                        <DialogTrigger>
+                        <button className="text-base border border-blueText px-4 rounded hover:border-red-800 hover:text-red-800 transition-all duration-200">Banir</button>
+
+                        </DialogTrigger>
+                        <DialogContent className="bg-whiteLight">
+                            <DialogHeader>
+                                <DialogTitle className="text-darkBlueText">Banir vaga</DialogTitle>
+                                
+                            </DialogHeader>
+                            <p className="text-gray-500">Atenão! Após esta ação a vaga será banida PERMANENTEMENTE! Está ação não poderá ser desfeita.</p>
+
+                            <DialogClose>
+                                <button className="w-full border border-red-800 py-2 rounded text-red-800 hover:bg-red-800 hover:text-white transition-all duration-200" onClick={()=>banjob()}>Banir vaga</button>
+                            </DialogClose>
+                        </DialogContent>
+                    </Dialog>
+
+                    :
+
+                    job?
+                        auth.user?.isContractor?
+                        null
+                        :
                         job?.candidates.length > 0?
                         job.candidates.filter((candidate)=> candidate == auth.user?._id).length>0?
                             <p className="flex items-center gap-3"><IoCheckmark/>Já candidatado</p>
