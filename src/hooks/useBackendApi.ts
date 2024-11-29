@@ -33,6 +33,7 @@ export const useBackendApi = () =>({
     };
   },
 
+
   createUser: async(name: string,
     email: string,
     password: string,
@@ -42,7 +43,7 @@ export const useBackendApi = () =>({
     state: string,
     isContractor:boolean, 
     isADM: boolean) =>{
-    const response = await axios.post(`${URL}/createUser`, {name, email, password, cpf, cep, birthDate, state, isContractor, isADM})
+    const response = await axios.post(`${URL}/createUser`, {name, email, password, cep, state, cpf, birthDate, isContractor, isADM})
 
     return{
       user: response.data
@@ -136,6 +137,17 @@ export const useBackendApi = () =>({
 
   updateUser: async(name: string, bio: string, email: string, password: string, cep: string, state: string, birthDate: string)=>{
     const response = await axios.put(`${URL}/UpdateUser`, {name, bio, email, password, cep, state, birthDate},{
+      headers: {
+        Authorization: `Bearer ${storageData}`,
+      },
+    })
+    return {
+      user: response.data
+    }
+  },
+
+  disablePosition: async(id: string)=>{
+    const response = await axios.put(`${URL}/DisablePosition`, {id},{
       headers: {
         Authorization: `Bearer ${storageData}`,
       },

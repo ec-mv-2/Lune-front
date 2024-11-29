@@ -47,6 +47,7 @@ interface jobPosition {
     summary: string;
     skill: [];
     location: string;
+    contractorId: string;
   }
 
 export function HomePage() {
@@ -155,8 +156,8 @@ export function HomePage() {
         
         if(!startDate) return 
         if(!endDate) return
-        const dateFormated = format(startDate, 'MM/dd/yyyy')
-        const dateFormatedEnd = format(endDate, 'MM/dd/yyyy')
+        const dateFormated = format(startDate, 'dd/MM/yyyy')
+        const dateFormatedEnd = format(endDate, 'dd/MM/yyyy')
 
         const newPosition = {
             title,

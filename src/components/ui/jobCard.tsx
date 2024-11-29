@@ -16,7 +16,8 @@ interface Job {
   summary: string;
   skill: string[];
   location: string;
-  contractorId: string
+  contractorId: string;
+  isVisible: boolean;
 }
 
 interface JobCardProps extends AllHTMLAttributes<HTMLDivElement>{
@@ -95,6 +96,10 @@ export function JobCard({ job, ...props}: JobCardProps) {
                 editPosition.isPrivate
             );
             
+
+
+
+
             // setPositions([...positions, response.position]);
             console.log('Vaga criada com sucesso:', response.position);
             setOpenDialogEdit(false);
@@ -106,6 +111,24 @@ export function JobCard({ job, ...props}: JobCardProps) {
 
 
    
+    
+    async function disableJob(){
+     
+      await backendApi.disablePosition(job._id)
+  
+      console.log(job._id)
+  }
+
+
+
+
+          
+          // setPositions([...positions, response.position]);
+
+
+
+
+
       // 
       const deleteJobPosition = async () => {
 
@@ -170,8 +193,11 @@ export function JobCard({ job, ...props}: JobCardProps) {
         <div className="flex flex-col md:flex-row justify-between items-start">
           <p className="text-lg font-semibold text-darkBlueText">{title}</p>
           <div className="flex gap-5 text-2xl text-gray-600 mt-2 md:mt-0">
-            {contractorId == auth.user?._id?
-            <p className="cursor-pointer hover:text-lightBlueText"><IoClipboardOutline /></p>
+            {
+            contractorId ==  auth.user?._id? !job.isVisible? <p  className="">Desativado</p> 
+            : 
+
+            <Button leftIcon={null} rightIcon={null} onClick={()=>{disableJob()}} variant="mediumSizeDark" >Desativar</Button> 
             
             : 
             <p className="cursor-pointer hover:text-lightBlueText"><CiShare2 /></p>
