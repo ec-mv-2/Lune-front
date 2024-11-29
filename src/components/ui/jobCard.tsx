@@ -189,7 +189,7 @@ export function JobCard({ job, ...props}: JobCardProps) {
 
   return (
     <div className="my-4" {...props}>
-      <div className="border border-lightBlueText rounded-md shadow-sm px-4 py-3 flex flex-col gap-3 w-full max-w-lg" >
+      <div className="border border-lightBlueText rounded-md shadow-sm px-4 py-3 flex flex-col gap-3 w-full max-w-xg" >
         <div className="flex flex-col md:flex-row justify-between items-start">
           <p className="text-lg font-semibold text-darkBlueText">{title}</p>
           <div className="flex gap-5 text-2xl text-gray-600 mt-2 md:mt-0">
